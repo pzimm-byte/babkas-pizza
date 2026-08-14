@@ -2,7 +2,7 @@
 
 Mobile wood-fired catering site for Babka's Pizza Company. Come taste the difference.
 
-Live site: GitHub Pages URL will appear here after the first deploy.
+Live site: https://pzimm-byte.github.io/babkas-pizza/
 
 ## Local preview
 
