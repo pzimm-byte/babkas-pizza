@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<meta name="ext-resource-dependency" content="assets/gozney-peel-cut.jpg" data-resource-id="imgGozney" />
+<meta name="ext-resource-dependency" content="assets/margherita-overhead.jpg" data-resource-id="imgMargherita" />
+<meta name="ext-resource-dependency" content="assets/checkerboard-spread.jpg" data-resource-id="imgCheckerboard" />
+<meta name="ext-resource-dependency" content="assets/picnic-slice-pull.jpg" data-resource-id="imgPicnic" />
+<meta name="ext-resource-dependency" content="assets/assembly-toppings.jpg" data-resource-id="imgAssembly" />
+<meta name="ext-resource-dependency" content="assets/sicilian-pepperoni-ranch.jpg" data-resource-id="imgSicilian" />
+<template id="__bundler_thumbnail" data-bg-color="#0d0b0a"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg></template>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Yellowtail&amp;family=Playball&amp;family=Caveat:wght@600&amp;family=Dancing+Script:wght@600;700&amp;family=Oswald:wght@400;500;600;700&amp;family=Nunito:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+--black:#0d0b0a;--charcoal:#221e1c;--ink:#171412;--white:#ffffff;--cream:#fdf6ec;--paper:#fbeee0;
+--flame-500:#ef5424;--flame-600:#d8431a;--flame-700:#b6360f;--flame-300:#f7864f;
+--brick-300:#e3ab6f;--brick-500:#cf8c48;--brick-700:#a8672c;--check-red:#c8102e;--check-red-dark:#9c0c22;
+--olive:#5c6b3f;--basil:#41562c;--gray-100:#f2ede4;--gray-300:#d9d0c2;--gray-500:#a49685;--gray-700:#6b5f52;--gray-900:#2e2723;
+--font-script:'Caveat','Playball',cursive;--font-script-light:'Dancing Script',cursive;--font-display:'Oswald',sans-serif;--font-body:'Nunito',sans-serif;
+--text-display-1:clamp(3rem,6vw,5.5rem);--text-display-2:clamp(2rem,4vw,3.25rem);--ls-arch:0.12em;--ls-tag:0.02em;
+--radius-lg:18px;--radius-pill:999px;--shadow-card:0 2px 6px rgba(13,11,10,0.08),0 1px 2px rgba(13,11,10,0.10);--shadow-lift:0 10px 24px rgba(13,11,10,0.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@keyframes bpDropA{0%{opacity:0;transform:translate(var(--dx),-36px) rotate(var(--rot)) scale(1.7)}18%{opacity:1}70%{opacity:1;transform:translate(0,0) rotate(0deg) scale(0.9)}100%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)}}
+@keyframes bpDropB{0%{opacity:0;transform:translate(var(--dx),-36px) rotate(var(--rot)) scale(1.7)}18%{opacity:1}70%{opacity:1;transform:translate(0,0) rotate(0deg) scale(0.9)}100%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)}}
+section[id]{scroll-margin-top:100px}
+body{margin:0;background:var(--cream);font-family:var(--font-body)}
+a{color:var(--flame-600);text-decoration:none}
+a:hover{color:var(--flame-700)}
+input,select,textarea{font-family:var(--font-body)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-accent,var(--flame-500))!important}
+@media(min-width:901px){
+  .bp-nav a{position:relative;display:inline-block;padding:8px 2px;transition:color 200ms ease,transform 200ms ease,text-shadow 200ms ease}
+  .bp-nav a::after{content:'';position:absolute;left:50%;right:50%;bottom:0;height:2px;border-radius:2px;background:var(--flame-500);transition:left 250ms ease,right 250ms ease}
+  .bp-nav a:hover{color:var(--flame-300)!important;transform:translateY(-2px);text-shadow:0 0 14px rgba(255,138,61,0.55)}
+  .bp-nav a:hover::after{left:0;right:0}
+  .bp-nav:hover a:not(:hover){opacity:0.55}
+  .bp-nav a{opacity:1}
+}
+  .bp-footer a{color:var(--white);text-decoration:none}
+  .bp-foot-link{opacity:.85;transition:color .2s,opacity .2s,transform .2s;display:inline-block}
+  .bp-foot-link:hover{color:var(--flame-300)!important;opacity:1;transform:translateX(3px)}
+  .bp-foot-social{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);display:inline-flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,transform .2s}
+  .bp-foot-social:hover{background:var(--flame-500);border-color:var(--flame-500);transform:translateY(-3px)}
+  .bp-foot-cta{transition:transform .2s,box-shadow .2s}
+  .bp-foot-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(239,84,36,.4)}
+@media(min-width:901px) and (max-width:1180px){
+  .bp-nav{gap:16px!important;font-size:12px!important;letter-spacing:0.08em!important}
+  .bp-cart-label{display:none!important}
+}
+@media(max-width:900px){
+  .bp-desktop-nav{display:none!important}
+  .bp-hamburger{display:flex!important}
+  .bp-cart-label{display:none!important}
+  .bp-cart-btn{width:auto!important;height:auto!important;padding:10px 12px!important}
+  .bp-hero-h1{font-size:clamp(1.7rem,7.4vw,3.2rem)!important}
+}
+@media(min-width:901px){
+  .bp-mobile-panel{display:none!important}
+}
+@keyframes bp-spin{to{transform:rotate(360deg)}}
+@keyframes bp-flicker{0%,100%{transform:scale(1) translateY(0);filter:brightness(1) saturate(1)}25%{transform:scale(1.03) translateY(-2px);filter:brightness(1.08) saturate(1.15)}50%{transform:scale(0.98) translateY(1px);filter:brightness(0.96) saturate(0.95)}75%{transform:scale(1.02) translateY(-1px);filter:brightness(1.05) saturate(1.1)}}
+</style>
+</helmet>
+
+<sc-if value="{{ loaderVisible }}" hint-placeholder-val="{{ true }}">
+<div style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; overflow: hidden; opacity: {{ loaderOpacity }}; transition: opacity 400ms ease; background-color: #000000">
+  <video autoPlay="{{ true }}" muted="{{ true }}" playsInline="{{ true }}" webkit-playsinline="{{ true }}" disablePictureInPicture="{{ true }}" controlsList="nodownload noplaybackrate" onended="{{ onLoaderVideoEnded }}" style="width:288px;height:288px;object-fit:contain;pointer-events:none">
+    <source src="assets/brand/loading-animation.mp4" type="video/mp4">
+  </video>
+</div>
+</sc-if>
+
+<div style="font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh">
+
+<header style="position: sticky; top: 0; z-index: 100; padding: 14px 28px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; box-shadow: var(--shadow-card); background-color: #000000">
+  <a href="#home" style="display:flex;align-items:center;grid-column:1;justify-self:start"><img src="assets/brand/wordmark-babkas.jpg" alt="Babka's Pizza Co." style="height:68px;width:auto;mix-blend-mode:screen"></a>
+  <nav class="bp-desktop-nav bp-nav" style="position:relative;grid-column:2;justify-self:center;display:flex;gap:30px;align-items:center;font-family:var(--font-display);text-transform:uppercase;font-size:13px;letter-spacing:var(--ls-arch);color:var(--white)">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+      <a href="{{ n.href }}" data-id="{{ n.id }}" style="{{ n.style }}">{{ n.label }}</a>
+    </sc-for>
+    <span style="{{ navIndStyle }}"></span>
+  </nav>
+  <div style="grid-column:3;justify-self:end;display:flex;align-items:center;gap:12px">
+    <a href="#popup" class="bp-desktop-nav" style="background:var(--flame-500);color:var(--white);font-family:var(--font-body);font-weight:800;font-size:14px;padding:0;border-radius:var(--radius-pill);display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:152px;height:46px;white-space:nowrap">Our Schedule</a>
+    <button class="bp-cart-btn" onclick="{{ openCart }}" aria-label="My Order" style="display:inline-flex;align-items:center;gap:8px;background:transparent;border:2px solid var(--flame-500);color:var(--white);font-family:var(--font-body);font-weight:800;font-size:14px;padding:0;justify-content:center;box-sizing:border-box;width:152px;height:46px;white-space:nowrap;border-radius:var(--radius-pill);cursor:pointer;line-height:1">
+      <sc-if value="{{ hasCount }}">
+        <span style="background:var(--flame-500);color:var(--white);width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;line-height:1">{{ cartCount }}</span>
+      </sc-if>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 7H6"></path></svg>
+      <span class="bp-cart-label">My Order</span>
+    </button>
+    <button class="bp-hamburger" onclick="{{ toggleNav }}" style="display:none;background:none;border:none;color:var(--white);font-size:28px;cursor:pointer;padding:0;line-height:1">☰</button>
+  </div>
+</header>
+
+<sc-if value="{{ cartOpen }}">
+<div style="position:fixed;inset:0;z-index:400">
+  <div onclick="{{ closeCart }}" style="position:absolute;inset:0;background:rgba(0,0,0,0.6)"></div>
+  <aside role="dialog" aria-label="My Order" style="position:absolute;top:0;right:0;bottom:0;width:400px;max-width:100vw;background:var(--white);color:var(--ink);display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,0.35)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#000000;color:var(--white)">
+      <span style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:18px">My Order</span>
+      <button onclick="{{ closeCart }}" aria-label="Close" style="background:none;border:none;color:var(--white);font-size:28px;cursor:pointer;line-height:1;padding:0">×</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+      <sc-if value="{{ cartEmpty }}">
+        <div style="text-align:center;color:var(--gray-700);padding:48px 8px;font-size:15px;line-height:1.6">Your order is empty.<br>Tap "Add to Order" on any pizza to start.</div>
+      </sc-if>
+      <sc-for list="{{ cartLines }}" as="line" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--gray-300)">
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+            <span style="font-family:var(--font-display);font-weight:600;font-size:16px">{{ line.name }}</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button onclick="{{ line.dec }}" aria-label="Remove one" style="width:30px;height:30px;border-radius:50%;border:2px solid var(--gray-300);background:var(--white);font-size:18px;line-height:1;cursor:pointer">−</button>
+              <span style="font-weight:800;min-width:18px;text-align:center">{{ line.qty }}</span>
+              <button onclick="{{ line.inc }}" aria-label="Add one" style="width:30px;height:30px;border-radius:50%;border:2px solid var(--gray-300);background:var(--white);font-size:18px;line-height:1;cursor:pointer">+</button>
+            </div>
+          </div>
+          <span style="font-weight:800;color:var(--flame-600);white-space:nowrap">{{ line.lineTotal }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ hasItems }}">
+      <div style="padding:20px 24px;border-top:2px solid var(--gray-300);display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;font-weight:800;font-size:18px"><span>{{ cartItemsLabel }}</span><span>{{ cartTotal }}</span></div>
+        <sc-if value="{{ isLive }}">
+          <a href="{{ orderUrl }}" target="_blank" rel="noopener" style="display:block;text-align:center;background:var(--flame-500);color:var(--white);font-weight:800;font-size:16px;padding:15px 24px;border-radius:var(--radius-pill)">Place Order</a>
+        </sc-if>
+        <sc-if value="{{ notLive }}">
+          <span style="display:block;text-align:center;background:var(--gray-300);color:var(--gray-700);font-weight:800;font-size:16px;padding:15px 24px;border-radius:var(--radius-pill);cursor:not-allowed">Place Order</span>
+          <span style="text-align:center;color:var(--gray-700);font-size:13px;line-height:1.5">Ordering opens when our next pop-up goes live. Your order is saved here until then.</span>
+        </sc-if>
+        <button onclick="{{ clearCart }}" style="background:none;border:none;color:var(--gray-700);font-size:13px;text-decoration:underline;cursor:pointer;padding:0">Clear order</button>
+      </div>
+    </sc-if>
+  </aside>
+</div>
+</sc-if>
+
+<sc-if value="{{ navOpen }}">
+<div class="bp-mobile-panel" style="background:var(--black);padding:18px 28px;display:flex;flex-direction:column;gap:16px;font-family:var(--font-display);text-transform:uppercase;font-size:14px;letter-spacing:var(--ls-arch)">
+  <a href="#home" onclick="{{ closeNav }}" style="color:var(--white)">Home</a>
+  <a href="#popup" onclick="{{ closeNav }}" style="color:var(--flame-300)">Pop-Up Schedule</a>
+  <a href="#about" onclick="{{ closeNav }}" style="color:var(--white)">About</a>
+  <a href="#menu" onclick="{{ closeNav }}" style="color:var(--white)">Menu</a>
+  <a href="#gallery" onclick="{{ closeNav }}" style="color:var(--white)">Gallery</a>
+  <a href="#request" onclick="{{ closeNav }}" style="color:var(--white)">Request a Pop-Up</a>
+</div>
+</sc-if>
+
+<section id="home" style="position: relative; min-height: 480px; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; background-color: #000000">
+  
+  <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;padding:48px 24px;max-width:1100px">
+    <video autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" webkit-playsinline="{{ true }}" disablePictureInPicture="{{ true }}" onloadeddata="this.muted=true;this.play()" oncanplay="this.muted=true;this.play()" onpause="this.play()" onended="this.currentTime=0;this.play()" style="width:180px;height:auto;border-radius:var(--radius-lg);padding:10px;box-shadow:var(--shadow-card);pointer-events:none">
+      <source src="assets/brand/flame-loop.mp4" type="video/mp4">
+    </video>
+    <h1 class="bp-hero-h1" style="font-family:'Playball','Yellowtail',cursive;font-weight:400;color:var(--white);font-size:clamp(1.7rem,7.4vw,5rem);white-space:nowrap;margin:0;line-height:1.05;position:relative;left:0.14em">Come taste the difference!&nbsp;</h1>
+    <p style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);color:var(--brick-300);font-size:1.15rem;margin:0">Fresh fired pizza</p>
+    <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;justify-content:center">
+      <a href="#popup" style="background:var(--flame-500);color:var(--white);font-weight:800;font-size:16px;padding:16px 32px;border-radius:var(--radius-pill)">Our Schedule</a>
+      <a href="#menu" style="background:var(--flame-500);color:var(--white);font-weight:800;font-size:16px;padding:16px 32px;border-radius:var(--radius-pill)">View Menu</a>
+    </div>
+  </div>
+</section>
+
+<section id="popup" style="padding:80px 28px;background:var(--paper);display:flex;flex-direction:column;align-items:center;gap:40px">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+    <span style="font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-500)">Pop-Up Schedule</span>
+    <h2 style="font-family:var(--font-display);font-weight:400;text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:clamp(1.6rem,4.5vw,2.4rem);line-height:1.1;margin:0;color:var(--ink)">Where to find us</h2>
+    <p style="margin:6px 0 0;color:var(--gray-700);font-size:15px;max-width:520px">Stop by, order ahead, or both!</p>
+  </div>
+
+  <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ true }}">
+  <div style="width:100%;max-width:1000px;background:var(--black);color:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lift);padding:clamp(22px,5vw,36px);display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between">
+    <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:10px;min-width:0">
+      <span style="{{ nextChipStyle }}">{{ nextChip }}</span>
+      <h3 style="font-family:var(--font-script);font-weight:600;font-size:2.4rem;line-height:1.1;margin:0;color:var(--white)">{{ next.name }}</h3>
+      <span style="font-weight:700;color:var(--brick-300);font-size:16px">{{ next.when }}</span>
+      <span style="color:var(--gray-300);font-size:15px">{{ next.address }}</span>
+      <p style="margin:6px 0 0;color:var(--gray-300);font-size:15px;line-height:1.6;max-width:440px">{{ nextBlurb }}</p>
+    </div>
+    <div style="flex:1 1 280px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:16px">
+      <svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true" style="overflow:visible">
+        <defs>
+          <radialGradient id="bpCheese" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="40">
+            <stop offset="0" stop-color="#fbe08f"></stop>
+            <stop offset="0.65" stop-color="#f3c25a"></stop>
+            <stop offset="1" stop-color="#e3a23c"></stop>
+          </radialGradient>
+          <radialGradient id="bpPep" cx="0.35" cy="0.3" r="0.85">
+            <stop offset="0" stop-color="#dd5a3c"></stop>
+            <stop offset="0.6" stop-color="#b8261f"></stop>
+            <stop offset="1" stop-color="#8f1717"></stop>
+          </radialGradient>
+        </defs>
+        <sc-for list="{{ pizzaSlices }}" as="sl" hint-placeholder-count="8">
+          <g style="{{ sl.style }}">
+            <path d="{{ sl.sauce }}" fill="#b8321a"></path>
+            <path d="{{ sl.cheese }}" fill="url(#bpCheese)" stroke="#f0c25a" stroke-width="1.8" stroke-linejoin="round"></path>
+            <path d="{{ sl.crust }}" fill="none" stroke="#d9993f" stroke-width="6" stroke-linecap="round"></path>
+            <path d="{{ sl.crustHi }}" fill="none" stroke="#f0c985" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.65"></path>
+            <circle cx="{{ sl.p1x }}" cy="{{ sl.p1y }}" r="{{ sl.p1r }}" fill="url(#bpPep)" stroke="#7a1010" stroke-width="0.6" style="{{ sl.p1style }}"></circle>
+            <circle cx="{{ sl.p2x }}" cy="{{ sl.p2y }}" r="{{ sl.p2r }}" fill="url(#bpPep)" stroke="#7a1010" stroke-width="0.6" style="{{ sl.p2style }}"></circle>
+          </g>
+        </sc-for>
+      </svg>
+      <span style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:13px;color:var(--flame-300)">{{ countdownLabel }}</span>
+      <div style="display:flex;gap:10px;width:100%;max-width:340px">
+        <sc-for list="{{ countdownParts }}" as="part" hint-placeholder-count="4">
+          <div style="background:var(--charcoal);border-radius:12px;flex:1 1 0;min-width:0;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:2px">
+            <span style="font-family:var(--font-display);font-weight:600;font-size:34px;line-height:1;font-variant-numeric:tabular-nums">{{ part.value }}</span>
+            <span style="font-size:11px;letter-spacing:var(--ls-tag);text-transform:uppercase;color:var(--gray-500)">{{ part.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ isLive }}" hint-placeholder-val="{{ false }}">
+        <a href="{{ orderUrl }}" target="_blank" rel="noopener" style="background:var(--flame-500);color:var(--white);font-weight:800;font-size:17px;padding:16px 44px;border-radius:var(--radius-pill);text-align:center">Place Order</a>
+        <span style="font-size:13px;color:var(--gray-300);text-align:center;max-width:300px">We're live. Place your mobile order here and pick up at the oven.</span>
+      </sc-if>
+      <sc-if value="{{ notLive }}" hint-placeholder-val="{{ true }}">
+        <span style="background:var(--charcoal);color:var(--gray-500);font-weight:800;font-size:17px;padding:16px 44px;border-radius:var(--radius-pill);text-align:center;cursor:not-allowed">Place Order</span>
+        <span style="font-size:13px;color:var(--gray-300);text-align:center;max-width:300px">Order ahead opens when the pop-up goes live.</span>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ noNext }}" hint-placeholder-val="{{ false }}">
+  <div style="width:100%;max-width:1000px;background:var(--black);color:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lift);padding:44px 36px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center">
+    <h3 style="font-family:var(--font-script);font-weight:600;font-size:2.2rem;margin:0">No pop-ups on the calendar yet</h3>
+    <p style="margin:0;color:var(--gray-300);font-size:15px;max-width:440px">New dates are added soon. Want us near you? Request a pop-up location below.</p>
+  </div>
+  </sc-if>
+
+  <div style="width:100%;max-width:1000px;display:flex;flex-direction:column;gap:14px">
+    <h3 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:14px;color:var(--gray-700);margin:0">Next 30 days</h3>
+    <sc-if value="{{ hasEvents }}" hint-placeholder-val="{{ true }}">
+    <sc-for list="{{ events }}" as="ev" hint-placeholder-count="4">
+      <div style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:16px 20px;display:flex;flex-wrap:wrap;gap:18px;align-items:center">
+        <div style="background:var(--black);color:var(--white);border-radius:12px;width:68px;padding:8px 0;display:flex;flex-direction:column;align-items:center;flex:none">
+          <span style="font-family:var(--font-display);font-size:12px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-300)">{{ ev.weekday }}</span>
+          <span style="font-family:var(--font-display);font-weight:600;font-size:26px;line-height:1.1">{{ ev.day }}</span>
+          <span style="font-size:11px;text-transform:uppercase;color:var(--gray-300)">{{ ev.month }}</span>
+        </div>
+        <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:2px;min-width:0">
+          <sc-if value="{{ ev.showChip }}">
+            <span style="{{ ev.chipStyle }}">{{ ev.chip }}</span>
+          </sc-if>
+          <span style="font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--ink)">{{ ev.name }}</span>
+          <span style="color:var(--gray-700);font-size:14px">{{ ev.address }}</span>
+        </div>
+        <span style="font-weight:700;color:var(--flame-600);font-size:15px">{{ ev.time }}</span>
+      </div>
+    </sc-for>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+    <span style="color:var(--gray-700);font-size:15px">Don't see us near you?</span>
+    <a href="#request" style="background:transparent;color:var(--ink);font-weight:800;font-size:15px;padding:14px 30px;border-radius:var(--radius-pill);box-shadow:inset 0 0 0 2px var(--ink)">Request a Pop-Up Location</a>
+  </div>
+</section>
+
+<section id="about" style="padding:80px 28px;max-width:1180px;margin:0 auto;display:flex;gap:48px;align-items:center;flex-wrap:wrap;justify-content:center">
+  <img src="./469809714_122134913420471337_55004964109-mss4h4dr-un6l.jpg" alt="Wood-fired pizza on a Gozney peel" style="flex:1 1 380px;width:380px;height:420px;object-fit:cover;border-radius:var(--radius-lg);box-shadow:var(--shadow-lift)">
+  <div style="flex:1 1 380px;max-width:480px;display:flex;flex-direction:column;gap:14px">
+    <span style="font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-500)">Our Story</span>
+    <h2 style="font-family:var(--font-script);font-weight:600;font-size:var(--text-display-2);margin:0;color:var(--ink)">Mobile pop-up pizza shop</h2>
+    <p style="margin:0;color:var(--gray-700);font-size:17px;line-height:1.7">We roll up with our Gozney dome ovens, set up a white canopy, and hand-stretch every pie to order, fired hot enough for that real blistered, wood-fired crust in about 90 seconds. Fresh dough, real char, no shortcuts.</p>
+    <p style="margin:0;color:var(--gray-700);font-size:17px;line-height:1.7">We pop up at a new spot each week. Our crew is right there at the peel, plating pies into checkered-napkin baskets as fast as you can grab them. Check the schedule to find us, or request a pop-up in your neighborhood.</p>
+    <div style="display:flex;gap:18px;margin-top:8px;flex-wrap:wrap">
+      
+      
+    </div>
+  </div>
+</section>
+
+<div style="display:flex;justify-content:center;gap:4px;background:var(--black);padding:10px 0">
+  <sc-for list="{{ archBricks }}" as="b" hint-placeholder-count="14">
+    <div style="width:16px;height:22px;background:var(--brick-500);border-radius:6px 6px 0 0"></div>
+  </sc-for>
+</div>
+
+<section id="menu" style="padding:80px 28px;background:var(--black);display:flex;flex-direction:column;align-items:center;gap:44px">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+    <span style="font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-500)">On The Menu</span>
+    <h2 style="font-family:var(--font-script);font-weight:600;font-size:var(--text-display-2);margin:0;color:var(--white)">Fresh from the oven</h2>
+    <p style="margin:6px 0 0;color:var(--gray-300);font-size:15px;max-width:520px">Build your order here, then place it while a pop-up is live, or scan the Square QR code at the truck to pay and pick your toppings.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;width:100%;max-width:1100px">
+    <sc-for list="{{ pizzas }}" as="item" hint-placeholder-count="5">
+      <div style="background:var(--white);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);display:flex;flex-direction:column">
+        <div style="position:relative;aspect-ratio:4/3">
+          <img src="{{ item.img }}" alt="{{ item.name }}" style="width:100%;height:100%;object-fit:cover">
+          <sc-if value="{{ item.badge }}">
+            <span style="position:absolute;top:12px;left:12px;background:var(--flame-500);color:var(--white);font-family:var(--font-display);font-weight:600;font-size:11px;letter-spacing:var(--ls-arch);text-transform:uppercase;padding:4px 12px;border-radius:var(--radius-pill)">{{ item.badge }}</span>
+          </sc-if>
+        </div>
+        <div style="padding:18px;display:flex;flex-direction:column;gap:6px;flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+            <span style="font-family:var(--font-display);font-weight:600;font-size:18px;color:var(--ink)">{{ item.name }}</span>
+            <span style="font-weight:800;color:var(--flame-600);font-size:16px;white-space:nowrap">{{ item.price }}</span>
+          </div>
+          <p style="margin:0 0 10px;color:var(--gray-700);font-size:14px;line-height:1.5">{{ item.desc }}</p>
+          <sc-if value="{{ item.notInCart }}">
+            <button onclick="{{ item.add }}" style="margin-top:auto;background:var(--flame-500);color:var(--white);font-weight:800;font-size:15px;padding:12px 20px;border-radius:var(--radius-pill);border:none;cursor:pointer">Add to Order</button>
+          </sc-if>
+          <sc-if value="{{ item.inCart }}">
+            <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;border:2px solid var(--flame-500);border-radius:var(--radius-pill);padding:4px">
+              <button onclick="{{ item.dec }}" aria-label="Remove one" style="width:38px;height:38px;border-radius:50%;border:none;background:var(--flame-500);color:var(--white);font-size:20px;line-height:1;cursor:pointer">−</button>
+              <span style="font-weight:800;font-size:15px">{{ item.qty }} in your order</span>
+              <button onclick="{{ item.inc }}" aria-label="Add one" style="width:38px;height:38px;border-radius:50%;border:none;background:var(--flame-500);color:var(--white);font-size:20px;line-height:1;cursor:pointer">+</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;width:100%;max-width:1100px;background:var(--charcoal);border-radius:var(--radius-lg);padding:32px">
+    <div>
+      <h3 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:14px;color:var(--flame-300);margin:0 0 12px">Kids Menu (12 &amp; under, half pie)</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;color:var(--gray-300);font-size:15px">
+        <div style="display:flex;justify-content:space-between"><span>Cheese</span><span>$8</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Pepperoni</span><span>$9</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Sausage</span><span>$9</span></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:14px;color:var(--flame-300);margin:0 0 12px">Extras</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;color:var(--gray-300);font-size:15px">
+        <div style="display:flex;justify-content:space-between"><span>2oz Marinara Sauce</span><span>$1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Hot Honey Drizzle</span><span>$1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Extra Meat</span><span>$3</span></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-arch);font-size:14px;color:var(--flame-300);margin:0 0 12px">Beverages</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;color:var(--gray-300);font-size:15px">
+        <div style="display:flex;justify-content:space-between"><span>Bottled Water</span><span>$1</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Southern Sweet Iced Tea 20oz</span><span>$3</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery" style="padding:80px 28px;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:36px">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+    <span style="font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-500)">Gallery</span>
+    <h2 style="font-family:var(--font-script);font-weight:600;font-size:var(--text-display-2);margin:0;color:var(--ink)">Straight from the peel</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:130px;gap:14px;width:100%">
+    <sc-for list="{{ galleryImages }}" as="img" hint-placeholder-count="5">
+      <div onclick="{{ img.open }}" style="{{ img.cellStyle }}">
+        <img src="{{ img.src }}" alt="{{ img.alt }}" style="width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in;border-radius:var(--radius-lg);transition:transform 200ms" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<sc-if value="{{ lightboxImage }}">
+  <div onclick="{{ closeLightbox }}" style="position:fixed;inset:0;background:rgba(13,11,10,0.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:40px">
+    <button onclick="{{ prevImage }}" style="position:absolute;left:24px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white);font-size:40px;cursor:pointer">‹</button>
+    <img src="{{ lightboxImage.src }}" alt="{{ lightboxImage.alt }}" style="max-width:min(900px,90vw);max-height:80vh;object-fit:contain;border-radius:var(--radius-lg);box-shadow:var(--shadow-lift)" onclick="event.stopPropagation()">
+    <button onclick="{{ nextImage }}" style="position:absolute;right:24px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white);font-size:40px;cursor:pointer">›</button>
+    <button onclick="{{ closeLightbox }}" style="position:absolute;top:24px;right:24px;background:none;border:none;color:var(--white);font-size:28px;cursor:pointer">×</button>
+  </div>
+</sc-if>
+
+<section id="request" style="padding:80px 28px;background:var(--paper);display:flex;flex-direction:column;align-items:center;gap:40px">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center">
+    <span style="font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:var(--ls-arch);text-transform:uppercase;color:var(--flame-500)">Request a Pop-Up Location</span>
+    <h2 style="font-family:var(--font-script);font-weight:600;font-size:var(--text-display-2);margin:0;color:var(--ink)">Too far from Chetek?</h2>
+    <p style="margin:6px 0 0;color:var(--gray-700);font-size:15px;max-width:520px">Let us know where we should go next!</p>
+  </div>
+
+  <sc-if value="{{ reqSubmitted }}" hint-placeholder-val="{{ false }}">
+    <div style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:48px;max-width:520px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center">
+      <span style="font-family:var(--font-script);font-weight:600;font-size:2.5rem;color:var(--flame-600)">Thanks!</span>
+      <p style="margin:0;color:var(--gray-700);font-size:16px;line-height:1.6">We logged your request for {{ reqAreaLabel }}. Share it with your neighbors: the more interest we see, the sooner we pop up there.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ reqFormVisible }}" hint-placeholder-val="{{ true }}">
+  <form onsubmit="{{ submitRequest }}" style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:40px;width:100%;max-width:760px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px">
+
+    <label style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:var(--ls-tag)">Name</span>
+      <input type="text" required="" value="{{ req.name }}" oninput="{{ setReqName }}" placeholder="Your name" style="font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-300);background:var(--white);color:var(--ink)">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:var(--ls-tag)">Email</span>
+      <input type="email" required="" value="{{ req.email }}" oninput="{{ setReqEmail }}" placeholder="you@email.com" style="font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-300);background:var(--white);color:var(--ink)">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:var(--ls-tag)">Neighborhood or Area</span>
+      <input type="text" required="" value="{{ req.area }}" oninput="{{ setReqArea }}" placeholder="e.g. Downtown, Oak Park" style="font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-300);background:var(--white);color:var(--ink)">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:var(--ls-tag)">ZIP Code</span>
+      <input type="text" required="" inputmode="numeric" value="{{ req.zip }}" oninput="{{ setReqZip }}" placeholder="e.g. 30301" style="font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-300);background:var(--white);color:var(--ink)">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1">
+      <span style="font-size:13px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:var(--ls-tag)">Suggested Spot (optional)</span>
+      <input type="text" value="{{ req.spot }}" oninput="{{ setReqSpot }}" placeholder="A busy lot, park, brewery, or business that would host us" style="font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--gray-300);background:var(--white);color:var(--ink)">
+    </label>
+
+    <sc-if value="{{ reqError }}">
+      <span style="grid-column:1/-1;color:var(--check-red);font-size:14px;font-weight:700">{{ reqError }}</span>
+    </sc-if>
+
+    <button type="submit" disabled="{{ reqSubmitting }}" style="{{ reqButtonStyle }}">
+      <sc-if value="{{ reqSubmitting }}" hint-placeholder-val="{{ false }}">
+        <span style="display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);border-top-color:var(--white);animation:bp-spin 700ms linear infinite"></span>
+        <span>Sending…</span>
+      </sc-if>
+      <sc-if value="{{ reqNotSubmitting }}" hint-placeholder-val="{{ true }}">
+        <span>Request a Pop-Up Location</span>
+      </sc-if>
+    </button>
+  </form>
+  </sc-if>
+</section>
+
+<footer class="bp-footer" style="position:relative;background:#171412;color:var(--white);padding:0">
+  <div style="height:4px;background:linear-gradient(90deg,var(--flame-500),#ffb347,var(--flame-500))"></div>
+  <div style="max-width:1180px;margin:0 auto;padding:56px 28px 36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px 48px">
+    <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+      <img src="assets/brand/full-lockup.jpg" alt="Babka's Pizza Company. Come taste the difference" style="width:190px;height:auto;mix-blend-mode:screen">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h4 style="margin:0;font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-tag);font-size:13px;color:var(--flame-300)">Explore</h4>
+      <nav style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:15px">
+        <a class="bp-foot-link" href="#home">Home</a>
+        <a class="bp-foot-link" href="#about">About</a>
+        <a class="bp-foot-link" href="#popup">Pop-Ups</a>
+        <a class="bp-foot-link" href="#menu">Menu</a>
+        <a class="bp-foot-link" href="#gallery">Gallery</a>
+        <a class="bp-foot-link" href="#request">Request a Pop-Up</a>
+      </nav>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h4 style="margin:0;font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-tag);font-size:13px;color:var(--flame-300)">Get in touch</h4>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:15px">
+        <a class="bp-foot-link" href="mailto:hello@babkaspizza.com">hello@babkaspizza.com</a>
+        <a class="bp-foot-link" href="tel:+15555550123">(555) 555-0123</a>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:6px">
+        <a class="bp-foot-social" href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+        <a class="bp-foot-social" href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8V6.5c0-.8.2-1.2 1.3-1.2H17V2.2C16.6 2.1 15.600 2 14.600 2 12.100 2 10.500 3.500 10.500 6.200V8H8v3.200h2.500V22H14V11.200h2.700L17 8z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0;padding:0 28px 32px;text-align:center;font-family:var(--font-display);text-transform:uppercase;letter-spacing:var(--ls-tag);font-size:clamp(11px,3.4vw,15px);white-space:nowrap;color:var(--flame-300)">Find us around Chetek and Barron County</p>
+  <div style="border-top:1px solid rgba(255,255,255,0.12)">
+    <div style="max-width:1180px;margin:0 auto;padding:18px 28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;font-family:var(--font-display);letter-spacing:var(--ls-tag);font-size:12px">
+      <span style="opacity:0.85">© 2026 Babka's Pizza Company. All rights reserved.</span>
+      <a class="bp-foot-link" href="#home" style="text-transform:uppercase">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+// ---- Pop-up settings: edit these to update the site ----
+// Placeholder schedule. Times are the viewer's local time. Replace with real pop-ups.
+const SCHEDULE = [
+  { date: '2026-11-06', start: '16:00', end: '20:00', name: 'Maple Street Brewery Patio', address: '123 Maple St' },
+  { date: '2026-11-07', start: '11:00', end: '15:00', name: 'Downtown Farmers Market Lot', address: '45 Market Ave' },
+  { date: '2026-11-13', start: '16:00', end: '20:00', name: 'Riverside Park Pavilion', address: '800 River Rd' },
+  { date: '2026-11-14', start: '11:00', end: '15:00', name: 'Eastside Community Center', address: '210 Elm St' },
+  { date: '2026-11-20', start: '16:00', end: '20:00', name: 'Maple Street Brewery Patio', address: '123 Maple St' },
+  { date: '2026-11-21', start: '11:00', end: '15:00', name: 'Downtown Farmers Market Lot', address: '45 Market Ave' },
+  { date: '2026-11-28', start: '11:00', end: '15:00', name: 'Riverside Park Pavilion', address: '800 River Rd' },
+  { date: '2026-12-04', start: '16:00', end: '20:00', name: 'Eastside Community Center', address: '210 Elm St' },
+];
+// Square ordering link used by the Place Order button while a pop-up is live. Replace with the real link.
+const ORDER_URL = 'https://squareup.com/';
+const pad2 = (n) => String(n).padStart(2, '0');
+
+class Component extends DCLogic {
+  state = {
+    loaderVisible: true,
+    loaderClosing: false,
+    navOpen: false,
+    activeNav: 'home',
+    navInd: null,
+    cart: {},
+    cartOpen: false,
+    galleryLightbox: null,
+    now: Date.now(),
+    req: { name: '', email: '', area: '', zip: '', spot: '' },
+    reqSubmitting: false,
+    reqSubmitted: false,
+    reqError: '',
+    reqAreaLabel: '',
+  };
+
+  componentDidMount() {
+    this._timers = [setTimeout(() => this.hideLoader(), 2000)];
+    this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    // Scroll spy: the menu bar highlights the section in view and a line slides between links.
+    this._onScroll = () => {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => { this._raf = 0; this.spy(); });
+    };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    window.addEventListener('resize', this._onScroll);
+    this._timers.push(setTimeout(() => this.spy(true), 300));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.spy(true));
+  }
+
+  spy(force) {
+    const ids = ['home', 'popup', 'about', 'menu', 'gallery', 'request'];
+    let active = 'home';
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.5) active = id;
+    });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) active = 'request';
+    const link = Array.from(document.querySelectorAll('.bp-nav a[data-id]')).find((a) => a.getAttribute('data-id') === active);
+    const st = this.state;
+    if (!link || !link.offsetWidth) {
+      if (st.activeNav !== active) this.setState({ activeNav: active });
+      return;
+    }
+    const nav = link.parentElement;
+    const left = link.offsetLeft;
+    const right = nav.clientWidth - (link.offsetLeft + link.offsetWidth);
+    const cur = st.navInd;
+    if (!force && st.activeNav === active && cur && cur.left === left && cur.right === right) return;
+    const dir = cur ? (left > cur.left ? 1 : -1) : 1;
+    this.setState({ activeNav: active, navInd: { left, right, dir } });
+  }
+
+  componentWillUnmount() {
+    (this._timers || []).forEach(clearTimeout);
+    clearInterval(this._tick);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onScroll);
+    if (this._raf) cancelAnimationFrame(this._raf);
+  }
+
+  hideLoader() {
+    if (this.state.loaderClosing) return;
+    this.setState({ loaderClosing: true });
+    setTimeout(() => this.setState({ loaderVisible: false }), 400);
+  }
+
+  setReq(field) {
+    return (e) => this.setState(s => ({ req: { ...s.req, [field]: e.target.value } }));
+  }
+
+  popupVals(now) {
+    const fmtDate = (d) => d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+    const fmtTime = (d) => d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    const all = SCHEDULE.map((e) => {
+      const start = new Date(e.date + 'T' + e.start + ':00');
+      const end = new Date(e.date + 'T' + e.end + ':00');
+      return { ...e, start, end, startMs: start.getTime(), endMs: end.getTime() };
+    }).sort((a, b) => a.startMs - b.startMs);
+    const future = all.filter((e) => e.endMs > now);
+    const windowEnd = now + 30 * 86400000;
+    const nextRaw = future[0] || null;
+    const isLive = !!nextRaw && now >= nextRaw.startMs;
+    const chipBase = { display: 'inline-block', alignSelf: 'flex-start', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 999, color: 'var(--white)' };
+    const liveChip = { ...chipBase, background: 'var(--olive)' };
+    const nextChipStyle = { ...chipBase, background: 'var(--flame-500)' };
+    const fullWhen = (e) => fmtDate(e.start) + ' · ' + fmtTime(e.start) + ' to ' + fmtTime(e.end);
+    const next = nextRaw ? { name: nextRaw.name, address: nextRaw.address, when: fullWhen(nextRaw) } : { name: '', address: '', when: '' };
+    const target = nextRaw ? (isLive ? nextRaw.endMs : nextRaw.startMs) : now;
+    let diff = Math.max(0, Math.floor((target - now) / 1000));
+    const d = Math.floor(diff / 86400); diff -= d * 86400;
+    const h = Math.floor(diff / 3600); diff -= h * 3600;
+    const m = Math.floor(diff / 60); const sec = diff - m * 60;
+    const events = future.filter((e) => e.startMs < windowEnd).map((e, i) => {
+      const live = i === 0 && isLive;
+      const upNext = i === 0 && !isLive;
+      return {
+        weekday: e.start.toLocaleDateString(undefined, { weekday: 'short' }),
+        day: String(e.start.getDate()),
+        month: e.start.toLocaleDateString(undefined, { month: 'short' }),
+        name: e.name,
+        address: e.address,
+        time: fmtTime(e.start) + ' to ' + fmtTime(e.end),
+        showChip: live || upNext,
+        chip: live ? 'Live now' : 'Next up',
+        chipStyle: live ? liveChip : nextChipStyle,
+      };
+    });
+    // Pizza countdown loop (11 ticks): rebuild + pepperoni drop (ticks 0-2), then one slice disappears per tick.
+    const phase = Math.floor(now / 1000) % 11;
+    const reloading = phase === 0;
+    const removed = phase <= 2 ? 0 : phase - 2;
+    const cycle = Math.floor(now / 11000);
+    const dropName = cycle % 2 ? 'bpDropA' : 'bpDropB';
+    const pt = (deg, r) => [50 + r * Math.cos(deg * Math.PI / 180), 50 + r * Math.sin(deg * Math.PI / 180)];
+    const rnd = (n) => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+    const wedgePath = (a0, a1, r) => { const q0 = pt(a0, r), q1 = pt(a1, r); return 'M50 50 L' + q0[0].toFixed(2) + ' ' + q0[1].toFixed(2) + ' A' + r + ' ' + r + ' 0 0 1 ' + q1[0].toFixed(2) + ' ' + q1[1].toFixed(2) + ' Z'; };
+    const arcPath = (a0, a1, r) => { const q0 = pt(a0, r), q1 = pt(a1, r); return 'M' + q0[0].toFixed(2) + ' ' + q0[1].toFixed(2) + ' A' + r + ' ' + r + ' 0 0 1 ' + q1[0].toFixed(2) + ' ' + q1[1].toFixed(2); };
+    // Pepperoni: random count and spots per slice, new every rebuild. They fall one at a time in a shuffled order.
+    const peps = [];
+    for (let i = 0; i < 8; i++) {
+      const mid = -90 + i * 45 + 22.5;
+      const R = (k) => rnd(i * 17 + k * 3.1 + cycle * 101.7);
+      const two = R(0) < 0.7;
+      const specs = two ? [[11, 23, 5.0 + R(5) * 0.9], [27, 34, 4.4 + R(6) * 0.9]] : [[12, 32, 5.2 + R(7) * 0.9]];
+      specs.forEach(([rMin, rMax, pr], j) => {
+        let p = null;
+        for (let a = 0; a < 14; a++) {
+          const r = rMin + R(1 + j * 2 + a * 7) * (rMax - rMin);
+          const lim = Math.max(0, 22.5 - Math.asin(Math.min(1, (pr + 2) / r)) * 180 / Math.PI);
+          p = pt(mid + (R(2 + j * 2 + a * 7) * 2 - 1) * lim, r);
+          // keep pepperoni from overlapping each other (including across neighboring slices)
+          if (peps.every((o) => Math.hypot(o.x - p[0], o.y - p[1]) >= o.r + pr + 0.8)) break;
+        }
+        peps.push({ i, j, x: p[0], y: p[1], r: pr, dx: (R(8 + j) * 2 - 1) * 14, rot: (R(10 + j) * 2 - 1) * 45 });
+      });
+    }
+    const order = peps.slice().sort((a, b) => rnd(a.i * 7 + a.j * 3 + cycle * 13.7 + 99) - rnd(b.i * 7 + b.j * 3 + cycle * 13.7 + 99));
+    for (let k = 1; k < order.length; k++) {
+      if (order[k].i === order[k - 1].i) {
+        const m = order.findIndex((o, idx) => idx > k && o.i !== order[k - 1].i);
+        if (m > k) { const t = order[k]; order[k] = order[m]; order[m] = t; }
+      }
+    }
+    order.forEach((p, k) => { p.delay = 400 + k * 110; });
+    const pepStyle = (p) => p ? { animation: dropName + ' 260ms ease-in ' + p.delay + 'ms both', transformBox: 'fill-box', transformOrigin: 'center', '--dx': p.dx.toFixed(1) + 'px', '--rot': p.rot.toFixed(0) + 'deg' } : { display: 'none' };
+    const pizzaSlices = Array.from({ length: 8 }, (_, i) => {
+      const a0 = -90 + i * 45 + 1.2, a1 = -90 + (i + 1) * 45 - 1.2;
+      const out = pt(-90 + i * 45 + 22.5, 9);
+      const gone = i < removed;
+      const p1 = peps.find((p) => p.i === i && p.j === 0);
+      const p2 = peps.find((p) => p.i === i && p.j === 1);
+      const fx = (v) => (v === undefined ? '0' : v.toFixed(2));
+      return {
+        sauce: wedgePath(a0, a1, 40.6),
+        cheese: wedgePath(a0 + 2.6, a1 - 2.6, 37.2),
+        crust: arcPath(a0 + 1.4, a1 - 1.4, 42.2),
+        crustHi: arcPath(a0 + 2.6, a1 - 2.6, 44.2),
+        p1style: pepStyle(p1), p2style: pepStyle(p2),
+        p1x: fx(p1 && p1.x), p1y: fx(p1 && p1.y), p1r: fx(p1 && p1.r),
+        p2x: fx(p2 && p2.x), p2y: fx(p2 && p2.y), p2r: fx(p2 && p2.r),
+        style: { opacity: gone ? 0 : 1, transform: gone ? 'rotate(-200deg) translate(' + (out[0] - 50).toFixed(2) + 'px,' + (out[1] - 50).toFixed(2) + 'px) scale(0.85)' : 'none', transformOrigin: '50px 50px', transition: reloading ? 'opacity 120ms ease-out, transform 500ms ease-in-out' : 'opacity 0ms, transform 100ms ease-out' },
+      };
+    });
+    return {
+      pizzaSlices,
+      hasNext: !!nextRaw,
+      noNext: !nextRaw,
+      next,
+      isLive,
+      notLive: !isLive,
+      nextChip: isLive ? 'Live now' : 'Next pop-up',
+      nextChipStyle: isLive ? liveChip : nextChipStyle,
+      nextBlurb: nextRaw
+        ? (isLive
+          ? 'We are live at ' + nextRaw.name + ' right now. Place your mobile order here and we will fire it fresh.'
+          : 'Our next mobile pop-up will be at ' + nextRaw.name + '. Be there or be square!')
+        : '',
+      countdownLabel: isLive ? 'Pop-up ends in' : 'Pop-up starts in',
+      countdownParts: [
+        { value: pad2(d), label: 'Days' },
+        { value: pad2(h), label: 'Hours' },
+        { value: pad2(m), label: 'Min' },
+        { value: pad2(sec), label: 'Sec' },
+      ],
+      orderUrl: ORDER_URL,
+      events,
+      hasEvents: events.length > 0,
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+
+    if (!window.__resources) {
+      const r = {};
+      document.querySelectorAll('meta[name="ext-resource-dependency"]').forEach((m) => {
+        r[m.getAttribute('data-resource-id')] = m.getAttribute('content');
+      });
+      window.__resources = r;
+    }
+
+    const images = [
+      { src: window.__resources.imgGozney, alt: 'Pizza sliding off the peel into the oven' },
+      { src: window.__resources.imgMargherita, alt: 'Overhead shot of a fresh Margherita' },
+      { src: window.__resources.imgCheckerboard, alt: 'Spread of pizzas on checkered napkins' },
+      { src: window.__resources.imgPicnic, alt: 'Pulling a cheesy slice at a picnic table' },
+      { src: window.__resources.imgAssembly, alt: 'Assembling toppings on fresh dough' },
+    ];
+    const spans = [2, 1, 1, 1, 1];
+    const galleryImages = images.map((img, i) => ({
+      ...img,
+      open: () => this.setState({ galleryLightbox: i }),
+      cellStyle: { gridRow: spans[i] === 2 ? 'span 2' : 'span 1' },
+    }));
+    const lightboxImage = s.galleryLightbox === null ? null : images[s.galleryLightbox];
+
+    const menu = [
+      { name: 'Classic Pepperoni', priceNum: 15, price: '$15', desc: 'Our sauce, pepperoni, mozzarella & oregano.', img: window.__resources.imgAssembly, badge: '' },
+      { name: 'Just Say Cheese', priceNum: 13, price: '$13', desc: 'Our sauce, mozzarella, parmesan & Asiago cheese.', img: window.__resources.imgMargherita, badge: '' },
+      { name: 'The Basil', priceNum: 13, price: '$13', desc: 'Our sauce, fresh basil, mozzarella, parmesan, olive oil drizzle.', img: window.__resources.imgCheckerboard, badge: 'Vegetarian' },
+      { name: 'The Nigel', priceNum: 16, price: '$16', desc: 'Italian salami, pepperoni, purple onion, pepperoncinis, mozzarella, parmesan, hot honey drizzle.', img: window.__resources.imgPicnic, badge: 'Best Seller' },
+      { name: 'Sausage, Mushroom, Onion', priceNum: 16, price: '$16', desc: 'Our sauce, Italian sausage, mozzarella, mushroom & purple onion.', img: window.__resources.imgAssembly, badge: '' },
+      { name: 'Sicilian Pepperoni Ranch', priceNum: 17, price: '$17', desc: 'Thick square crust, our sauce, pepperoni, mozzarella & a garlic ranch drizzle.', img: window.__resources.imgSicilian, badge: 'New' },
+    ];
+    const cart = s.cart;
+    const changeQty = (name, d) => this.setState(st => {
+      const q = Math.max(0, (st.cart[name] || 0) + d);
+      const c = { ...st.cart };
+      if (q === 0) delete c[name]; else c[name] = q;
+      return { cart: c };
+    });
+    const cartCount = menu.reduce((n, m) => n + (cart[m.name] || 0), 0);
+    const cartTotal = menu.reduce((n, m) => n + m.priceNum * (cart[m.name] || 0), 0);
+    const pizzas = menu.map((m) => {
+      const q = cart[m.name] || 0;
+      return { ...m, qty: q, inCart: q > 0, notInCart: q === 0, add: () => changeQty(m.name, 1), inc: () => changeQty(m.name, 1), dec: () => changeQty(m.name, -1) };
+    });
+    const cartLines = pizzas.filter((p) => p.qty > 0).map((p) => ({ name: p.name, qty: p.qty, lineTotal: '$' + (p.priceNum * p.qty), inc: p.inc, dec: p.dec }));
+
+    return {
+      ...this.popupVals(s.now),
+      loaderVisible: s.loaderVisible,
+      loaderOpacity: s.loaderClosing ? 0 : 1,
+      onLoaderVideoEnded: () => this.hideLoader(),
+      navOpen: s.navOpen,
+      navItems: [
+        { id: 'home', href: '#home', label: 'Home' },
+        { id: 'popup', href: '#popup', label: 'Pop-Ups' },
+        { id: 'about', href: '#about', label: 'About' },
+        { id: 'menu', href: '#menu', label: 'Menu' },
+        { id: 'gallery', href: '#gallery', label: 'Gallery' },
+        { id: 'request', href: '#request', label: 'Request a Pop-Up' },
+      ].map((n) => ({ ...n, style: { color: s.activeNav === n.id ? 'var(--flame-300)' : 'var(--white)' } })),
+      navIndStyle: (() => {
+        const ind = s.navInd;
+        if (!ind) return { display: 'none' };
+        const ease = 'cubic-bezier(.65,0,.35,1)';
+        const lead = 'left 520ms ' + ease + ', right 520ms ' + ease;
+        return {
+          position: 'absolute', bottom: 0, height: 3, borderRadius: 3, pointerEvents: 'none',
+          left: ind.left, right: ind.right,
+          background: 'linear-gradient(90deg,var(--flame-500),#ffb347)',
+          boxShadow: '0 0 12px rgba(239,84,36,0.85)',
+          transition: ind.dir > 0
+            ? 'left 520ms ' + ease + ' 110ms, right 520ms ' + ease
+            : 'left 520ms ' + ease + ', right 520ms ' + ease + ' 110ms',
+        };
+      })(),
+      toggleNav: () => this.setState(st => ({ navOpen: !st.navOpen })),
+      closeNav: () => this.setState({ navOpen: false }),
+      archBricks: Array.from({ length: 14 }, (_, i) => i),
+      pizzas,
+      cartLines,
+      cartCount,
+      hasCount: cartCount > 0,
+      hasItems: cartCount > 0,
+      cartEmpty: cartCount === 0,
+      cartTotal: '$' + cartTotal,
+      cartItemsLabel: cartCount + (cartCount === 1 ? ' item' : ' items'),
+      cartOpen: s.cartOpen,
+      openCart: () => this.setState({ cartOpen: true }),
+      closeCart: () => this.setState({ cartOpen: false }),
+      clearCart: () => this.setState({ cart: {} }),
+      galleryImages,
+      lightboxImage,
+      closeLightbox: () => this.setState({ galleryLightbox: null }),
+      prevImage: (e) => { e.stopPropagation(); this.setState(st => ({ galleryLightbox: (st.galleryLightbox + images.length - 1) % images.length })); },
+      nextImage: (e) => { e.stopPropagation(); this.setState(st => ({ galleryLightbox: (st.galleryLightbox + 1) % images.length })); },
+      req: s.req,
+      setReqName: this.setReq('name'), setReqEmail: this.setReq('email'), setReqArea: this.setReq('area'),
+      setReqZip: this.setReq('zip'), setReqSpot: this.setReq('spot'),
+      reqSubmitting: s.reqSubmitting,
+      reqNotSubmitting: !s.reqSubmitting,
+      reqError: s.reqError,
+      reqFormVisible: !s.reqSubmitted,
+      reqSubmitted: s.reqSubmitted,
+      reqAreaLabel: s.reqAreaLabel,
+      reqButtonStyle: {
+        gridColumn: '1/-1', justifySelf: 'center', display: 'flex', alignItems: 'center', gap: 10,
+        background: s.reqSubmitting ? 'var(--flame-700)' : 'var(--flame-500)', color: 'var(--white)', fontWeight: 800, fontSize: 16,
+        padding: '15px 40px', borderRadius: 999, border: 'none', cursor: s.reqSubmitting ? 'default' : 'pointer', marginTop: 6,
+        transition: 'background-color 120ms ease',
+      },
+      // Placeholder submit: shows the thank-you state only. Connect to storage (email, CRM, or database) to record requests.
+      submitRequest: (e) => {
+        e.preventDefault();
+        const f = s.req;
+        if (!f.name || !f.email || !f.area || !f.zip) {
+          this.setState({ reqError: 'Please fill out your name, email, area, and ZIP code.' });
+          return;
+        }
+        this.setState({ reqError: '', reqSubmitting: true });
+        setTimeout(() => this.setState({ reqSubmitting: false, reqSubmitted: true, reqAreaLabel: f.area }), 1300);
+      },
+    };
+  }
+}
+
+</script>
+</body>
+</html>
