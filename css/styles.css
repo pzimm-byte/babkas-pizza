@@ -1000,6 +1000,20 @@ textarea:focus {
   min-width: 0;
 }
 
+.event-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.event-ttl {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .event-copy .name {
   font-family: var(--font-display);
   font-weight: 600;
@@ -1013,9 +1027,13 @@ textarea:focus {
 }
 
 .event-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
   font-weight: 700;
-  color: var(--flame-600);
-  font-size: 15px;
+  color: var(--ink);
+  font-size: 14px;
 }
 
 .planner-going {
@@ -1111,30 +1129,29 @@ textarea:focus {
 }
 
 .planner-dir {
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  color: var(--ink);
-  border: 2px solid var(--gray-300);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--flame-500);
   background: var(--white);
-  border-radius: var(--radius-pill);
-  padding: 10px 14px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: var(--flame-500);
   text-decoration: none;
+  padding: 0;
 }
 
-.planner-dir:hover {
-  color: var(--ink);
-  border-color: var(--brick-500);
+.planner-dir:hover,
+.planner-dir:active {
+  background: var(--flame-500);
+  color: var(--white);
+  border-color: var(--flame-500);
 }
 
 .planner-dir svg {
-  color: var(--flame-500);
+  color: inherit;
   flex: none;
 }
 
@@ -1415,17 +1432,7 @@ textarea:focus {
 
   .planner-go {
     flex: 1;
-    width: auto;
-  }
-
-  .planner-dir {
-    width: 50px;
-    height: 46px;
-    padding: 0;
-  }
-
-  .planner-dir-label {
-    display: none;
+    width: 100%;
   }
 
   .planner-cal-big {
@@ -1465,6 +1472,27 @@ textarea:focus {
 
   .event-card {
     padding: 14px;
+  }
+}
+
+@media (min-width: 641px) {
+  .event-card {
+    position: relative;
+    align-items: flex-start;
+  }
+
+  .event-card .planner-dir {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+  }
+
+  .event-card > .planner-acts {
+    align-self: flex-end;
+    margin-left: auto;
+    min-height: 96px;
+    display: flex;
+    align-items: flex-end;
   }
 }
 

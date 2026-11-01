@@ -438,7 +438,11 @@
   }
 
   function pinSvg() {
-    return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></svg>`;
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></svg>`;
+  }
+
+  function clockSvg() {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>`;
   }
 
   function draftFor(ev) {
@@ -743,10 +747,9 @@
       ? `<div class="planner-going">${count} planning to go</div>
          <div class="planner-bar" aria-hidden="true"><span style="width:${Math.min(100, (count / 20) * 100)}%"></span></div>`
       : "";
-    const smallCal = confirmed ? "" : calBlock(ev, true);
     const goClass = open ? "planner-go is-close" : confirmed ? "planner-go is-done" : "planner-go";
     const goText = open ? "Close" : confirmed ? goingLabel(tap.partySize, "done") : "I'm going";
-    const dir = `<a class="planner-dir" target="_blank" rel="noopener noreferrer" aria-label="Directions" href="${directionsUrl(ev)}">${pinSvg()}<span class="planner-dir-label">Directions</span></a>`;
+    const dir = `<a class="planner-dir" target="_blank" rel="noopener noreferrer" aria-label="Get directions to ${escapeAttr(ev.name)} in Google Maps" title="Directions" href="${directionsUrl(ev)}">${pinSvg()}</a>`;
 
     let extra = "";
     if (open) extra = plannerFormMarkup(ev, draft, tap);
@@ -760,15 +763,19 @@
           <span class="month">${ev.month}</span>
         </div>
         <div class="event-copy">
-          ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
-          <span class="name">${ev.name}</span>
-          <span class="addr">${ev.address} · ${ev.time}</span>
+          <div class="event-head">
+            <div class="event-ttl">
+              ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
+              <span class="name">${ev.name}</span>
+              <span class="addr">${ev.address}</span>
+            </div>
+            ${dir}
+          </div>
+          <span class="event-time">${clockSvg()} ${ev.time}</span>
           ${countLine}
-          ${smallCal}
         </div>
         <div class="planner-acts">
           <button class="${goClass}" type="button" data-planner-go>${goText}</button>
-          ${dir}
         </div>
         ${extra}
       </div>`;
