@@ -90,6 +90,63 @@
     }, 400);
   }
 
+  function primeVideo(video) {
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute("autoplay", "");
+    if (!video.hasAttribute("loop")) video.setAttribute("loop", "");
+    video.loop = true;
+  }
+
+  function playVideo(video) {
+    if (!video) return Promise.resolve(false);
+    primeVideo(video);
+    const play = video.play();
+    if (!play || typeof play.then !== "function") return Promise.resolve(!video.paused);
+    return play.then(() => true).catch(() => false);
+  }
+
+  function bindPlayRetry(video, onStillBlocked) {
+    if (!video) return;
+    let settled = false;
+    let blocked = false;
+    const tryPlay = () => {
+      if (settled) return;
+      playVideo(video).then((ok) => {
+        if (ok) settled = true;
+        else blocked = true;
+      });
+    };
+    const onGesture = () => tryPlay();
+    const onVis = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    document.addEventListener("touchstart", onGesture, { passive: true });
+    document.addEventListener("pointerdown", onGesture, { passive: true });
+    document.addEventListener("click", onGesture);
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pageshow", onVis);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("canplay", tryPlay);
+    tryPlay();
+    if (onStillBlocked) {
+      window.setTimeout(() => {
+        if (settled || !video.paused) return;
+        if (blocked || video.error) onStillBlocked();
+      }, 3000);
+    }
+  }
+
+  function showHeroFallback() {
+    if (heroVideo) heroVideo.setAttribute("hidden", "");
+    if (heroFallback) heroFallback.removeAttribute("hidden");
+  }
+
   if (skipLoader) {
     hideLoader();
     if (loader) {
@@ -100,20 +157,14 @@
     document.body.classList.add("loader-open");
     loaderVideo?.addEventListener("ended", hideLoader);
     window.setTimeout(hideLoader, 2000);
-    loaderVideo?.play?.().catch(() => hideLoader());
+    bindPlayRetry(loaderVideo);
   }
 
   if (reduceMotion) {
-    if (heroVideo) heroVideo.setAttribute("hidden", "");
-    if (heroFallback) heroFallback.removeAttribute("hidden");
+    showHeroFallback();
   } else if (heroVideo) {
-    const playHero = () => {
-      heroVideo.muted = true;
-      heroVideo.play().catch(() => {});
-    };
-    heroVideo.addEventListener("loadeddata", playHero);
-    heroVideo.addEventListener("canplay", playHero);
-    playHero();
+    bindPlayRetry(heroVideo, showHeroFallback);
+    heroVideo.addEventListener("error", showHeroFallback);
   }
 
   /* ---------- mobile nav ---------- */
