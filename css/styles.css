@@ -1037,6 +1037,7 @@ textarea:focus {
   width: 380px;
   height: 420px;
   object-fit: cover;
+  object-position: 45% 0;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lift);
 }
@@ -1101,13 +1102,20 @@ textarea:focus {
 
 .menu-card-media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  aspect-ratio: 8 / 5;
+  overflow: hidden;
+  flex: 0 0 auto;
 }
 
 .menu-card-media img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
+  object-position: center 55%;
 }
 
 .badge {
@@ -1126,10 +1134,10 @@ textarea:focus {
 }
 
 .menu-card-body {
-  padding: 18px;
+  padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
 }
 
@@ -1155,10 +1163,10 @@ textarea:focus {
 }
 
 .menu-card-body p {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   color: var(--gray-700);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .menu-card-action {
@@ -1170,8 +1178,8 @@ textarea:focus {
   background: var(--flame-500);
   color: var(--white);
   font-weight: 800;
-  font-size: 15px;
-  padding: 12px 20px;
+  font-size: 14px;
+  padding: 10px 16px;
   border-radius: var(--radius-pill);
   border: none;
   cursor: pointer;
@@ -1185,20 +1193,20 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   border: 2px solid var(--flame-500);
   border-radius: var(--radius-pill);
-  padding: 4px;
+  padding: 3px;
 }
 
 .qty-bar button {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: none;
   background: var(--flame-500);
   color: var(--white);
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
 }

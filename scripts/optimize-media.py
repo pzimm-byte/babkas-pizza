@@ -109,6 +109,8 @@ def main() -> None:
     for name in photos:
         compress(name, OUT_PHOTOS / name.replace(".jpg", ".jpg"), max_side=1100, quality=78)
 
+    compress("team-tent.jpg", OUT_PHOTOS / "team-tent.jpg", max_side=1600, quality=78)
+
     # Logos sit on black and use mix-blend-mode: screen — keep a dark background.
     compress("brand/wordmark-babkas.jpg", OUT_BRAND / "wordmark-babkas.jpg", max_side=720, quality=82, bg=(0, 0, 0))
     compress("brand/full-lockup.jpg", OUT_BRAND / "full-lockup.jpg", max_side=560, quality=82, bg=(0, 0, 0))

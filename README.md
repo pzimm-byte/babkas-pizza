@@ -46,7 +46,7 @@ These are still placeholders. Do not ship them as written.
 - [ ] **Square ordering link.** `ORDER_URL` is still `https://squareup.com/`. Point it at the real Square page. Cart items do not carry over yet.
 - [ ] **Contact details.** Email `hello@babkaspizza.com`, phone `(555) 555-0123`, and the Instagram / Facebook links (`#`) are placeholders.
 - [ ] **Request form.** Submissions currently stay on the page. Set `REQUEST_FORM_ENDPOINT` to Formspree or Formsubmit, add spam protection, and decide who reads the requests.
-- [ ] **Story copy.** The About paragraphs are draft wording; confirm or rewrite them.
+- [x] **Story copy.** About section rewritten from the owner's story (family pop-up, Chetek / Barron County, babka = grandma, ingredient quality).
 - [ ] **Menu and prices.** Confirm the six pizzas, prices, and descriptions against the Square catalog.
 - [ ] **Live fonts.** Confirm Caveat, Playball, Oswald, and Nunito render on the published site (they load from Google Fonts).
 - [ ] **JSON-LD / Open Graph.** Update telephone and email in `index.html` when the real contact details land.
