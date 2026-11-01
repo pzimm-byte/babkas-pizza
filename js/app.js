@@ -4,38 +4,77 @@
   const SCHEDULE = Array.isArray(cfg.SCHEDULE) ? cfg.SCHEDULE : [];
   const ORDER_URL = cfg.ORDER_URL || "https://squareup.com/";
   const params = new URLSearchParams(window.location.search);
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const skipLoader = params.has("noloader") || reduceMotion;
+  const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const skipLoader = params.has("noloader");
+
+  function safe(label, fn) {
+    try {
+      return fn();
+    } catch (err) {
+      if (typeof console !== "undefined" && console.warn) console.warn("Babka's init:", label, err);
+      return undefined;
+    }
+  }
+
+  function fromEntries(list) {
+    if (Object.fromEntries) return Object.fromEntries(list);
+    const out = {};
+    for (let i = 0; i < list.length; i += 1) out[list[i][0]] = list[i][1];
+    return out;
+  }
 
   const pad2 = (n) => String(n).padStart(2, "0");
 
+  function zoneFormatter(options) {
+    const opts = options || {};
+    try {
+      return new Intl.DateTimeFormat("en-US", Object.assign({ timeZone: TZ, hourCycle: "h23" }, opts));
+    } catch (err1) {
+      try {
+        return new Intl.DateTimeFormat("en-US", Object.assign({ timeZone: TZ, hour12: false }, opts));
+      } catch (err2) {
+        return new Intl.DateTimeFormat("en-US", opts);
+      }
+    }
+  }
+
   function wallTimeToMs(dateStr, timeStr) {
-    const iso = `${dateStr}T${timeStr}:00`;
-    const asUtc = new Date(`${iso}Z`);
-    const fmt = new Intl.DateTimeFormat("en-US", {
-      timeZone: TZ,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    });
-    const parts = Object.fromEntries(fmt.formatToParts(asUtc).map((p) => [p.type, p.value]));
-    const shownAsUtc = Date.UTC(
-      Number(parts.year),
-      Number(parts.month) - 1,
-      Number(parts.day),
-      Number(parts.hour),
-      Number(parts.minute),
-      Number(parts.second)
-    );
-    return asUtc.getTime() - (shownAsUtc - asUtc.getTime());
+    try {
+      const iso = `${dateStr}T${timeStr}:00`;
+      const asUtc = new Date(`${iso}Z`);
+      const fmt = zoneFormatter({
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      const parts = fromEntries(fmt.formatToParts(asUtc).map((p) => [p.type, p.value]));
+      const shownAsUtc = Date.UTC(
+        Number(parts.year),
+        Number(parts.month) - 1,
+        Number(parts.day),
+        Number(parts.hour),
+        Number(parts.minute),
+        Number(parts.second)
+      );
+      return asUtc.getTime() - (shownAsUtc - asUtc.getTime());
+    } catch (err) {
+      return new Date(`${dateStr}T${timeStr}:00`).getTime();
+    }
   }
 
   function formatInZone(ms, options) {
-    return new Date(ms).toLocaleString("en-US", { timeZone: TZ, ...options });
+    try {
+      return new Date(ms).toLocaleString("en-US", Object.assign({ timeZone: TZ }, options || {}));
+    } catch (err) {
+      try {
+        return new Date(ms).toLocaleString("en-US", options);
+      } catch (err2) {
+        return new Date(ms).toString();
+      }
+    }
   }
 
   function fmtDate(ms) {
@@ -52,25 +91,27 @@
     return wallTimeToMs(first.date, first.start) + 30 * 60 * 1000;
   }
 
-  const forcedNow = simulateNow();
+  const forcedNow = safe("simulate", simulateNow) || null;
 
   function nowMs() {
     return forcedNow != null ? forcedNow : Date.now();
   }
 
   /* ---------- contact from config ---------- */
-  const emailEl = document.getElementById("contact-email");
-  const phoneEl = document.getElementById("contact-phone");
-  const igEl = document.getElementById("contact-instagram");
-  const fbEl = document.getElementById("contact-facebook");
-  if (cfg.EMAIL && emailEl) {
-    emailEl.href = `mailto:${cfg.EMAIL}`;
-    emailEl.textContent = cfg.EMAIL;
-  }
-  if (cfg.PHONE_TEL && phoneEl) phoneEl.href = `tel:${cfg.PHONE_TEL}`;
-  if (cfg.PHONE_DISPLAY && phoneEl) phoneEl.textContent = cfg.PHONE_DISPLAY;
-  if (cfg.INSTAGRAM_URL && igEl) igEl.href = cfg.INSTAGRAM_URL;
-  if (cfg.FACEBOOK_URL && fbEl) fbEl.href = cfg.FACEBOOK_URL;
+  safe("contact", () => {
+    const emailEl = document.getElementById("contact-email");
+    const phoneEl = document.getElementById("contact-phone");
+    const igEl = document.getElementById("contact-instagram");
+    const fbEl = document.getElementById("contact-facebook");
+    if (cfg.EMAIL && emailEl) {
+      emailEl.href = `mailto:${cfg.EMAIL}`;
+      emailEl.textContent = cfg.EMAIL;
+    }
+    if (cfg.PHONE_TEL && phoneEl) phoneEl.href = `tel:${cfg.PHONE_TEL}`;
+    if (cfg.PHONE_DISPLAY && phoneEl) phoneEl.textContent = cfg.PHONE_DISPLAY;
+    if (cfg.INSTAGRAM_URL && igEl) igEl.href = cfg.INSTAGRAM_URL;
+    if (cfg.FACEBOOK_URL && fbEl) fbEl.href = cfg.FACEBOOK_URL;
+  });
 
   /* ---------- loader + hero video ---------- */
   const loader = document.getElementById("loader");
@@ -147,25 +188,25 @@
     if (heroFallback) heroFallback.removeAttribute("hidden");
   }
 
-  if (skipLoader) {
-    hideLoader();
-    if (loader) {
-      loader.classList.add("is-gone");
-      loader.setAttribute("hidden", "");
+  safe("videos", () => {
+    if (skipLoader) {
+      hideLoader();
+      if (loader) {
+        loader.classList.add("is-gone");
+        loader.setAttribute("hidden", "");
+      }
+    } else {
+      document.body.classList.add("loader-open");
+      if (loaderVideo) loaderVideo.addEventListener("ended", hideLoader);
+      window.setTimeout(hideLoader, 2000);
+      bindPlayRetry(loaderVideo);
     }
-  } else {
-    document.body.classList.add("loader-open");
-    loaderVideo?.addEventListener("ended", hideLoader);
-    window.setTimeout(hideLoader, 2000);
-    bindPlayRetry(loaderVideo);
-  }
 
-  if (reduceMotion) {
-    showHeroFallback();
-  } else if (heroVideo) {
-    bindPlayRetry(heroVideo, showHeroFallback);
-    heroVideo.addEventListener("error", showHeroFallback);
-  }
+    if (heroVideo) {
+      bindPlayRetry(heroVideo, showHeroFallback);
+      heroVideo.addEventListener("error", showHeroFallback);
+    }
+  });
 
   /* ---------- mobile nav ---------- */
   const hamburger = document.getElementById("hamburger");
@@ -177,14 +218,19 @@
     hamburger?.setAttribute("aria-label", "Open menu");
   }
 
-  hamburger?.addEventListener("click", () => {
-    const open = mobilePanel.classList.toggle("is-open");
-    hamburger.setAttribute("aria-expanded", String(open));
-    hamburger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-  });
-
-  mobilePanel?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", closeNav);
+  safe("nav", () => {
+    if (hamburger) {
+      hamburger.addEventListener("click", () => {
+        const open = mobilePanel.classList.toggle("is-open");
+        hamburger.setAttribute("aria-expanded", String(open));
+        hamburger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      });
+    }
+    if (mobilePanel) {
+      mobilePanel.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", closeNav);
+      });
+    }
   });
 
   /* ---------- scroll spy + stretch underline ---------- */
@@ -196,6 +242,7 @@
   let spyRaf = 0;
 
   function spy(force) {
+    return safe("spy", () => {
     let active = "home";
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
@@ -231,6 +278,7 @@
       dir > 0
         ? `left 520ms ${ease} 110ms, right 520ms ${ease}`
         : `left 520ms ${ease}, right 520ms ${ease} 110ms`;
+    });
   }
 
   const onScroll = () => {
@@ -241,10 +289,12 @@
     });
   };
 
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
-  window.setTimeout(() => spy(true), 300);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => spy(true));
+  safe("spy-bind", () => {
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    window.setTimeout(() => spy(true), 300);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => spy(true));
+  });
 
   /* ---------- schedule + pizza timer ---------- */
   const nextCard = document.getElementById("next-card");
@@ -264,7 +314,7 @@
   function pizzaSlices(now) {
     const phase = Math.floor(now / 1000) % 11;
     const reloading = phase === 0;
-    const removed = reduceMotion ? 0 : phase <= 2 ? 0 : phase - 2;
+    const removed = phase <= 2 ? 0 : phase - 2;
     const cycle = Math.floor(now / 11000);
     const dropName = cycle % 2 ? "bpDropB" : "bpDropA";
     const pt = (deg, r) => [50 + r * Math.cos((deg * Math.PI) / 180), 50 + r * Math.sin((deg * Math.PI) / 180)];
@@ -323,8 +373,8 @@
 
     const pepCss = (p) => {
       if (!p) return "display:none";
-      if (reduceMotion) return "";
-      return `animation:${dropName} 260ms ease-in ${p.delay}ms both;transform-box:fill-box;transform-origin:center;--dx:${p.dx.toFixed(1)}px;--rot:${p.rot.toFixed(0)}deg`;
+      const ms = reduceMotion ? 700 : 260;
+      return `animation:${dropName} ${ms}ms ease-in ${p.delay}ms both;transform-box:fill-box;transform-origin:center;--dx:${p.dx.toFixed(1)}px;--rot:${p.rot.toFixed(0)}deg`;
     };
     const fx = (v) => (v === undefined ? "0" : v.toFixed(2));
 
@@ -356,7 +406,7 @@
         p2r: fx(p2 && p2.r),
         p1style: pepCss(p1),
         p2style: pepCss(p2),
-        style: `opacity:${gone ? 0 : 1};transform:${transform};transform-origin:50px 50px;transition:${reduceMotion ? "none" : transition}`,
+        style: `opacity:${gone ? 0 : 1};transform:${reduceMotion && gone ? "none" : transform};transform-origin:50px 50px;transition:${reduceMotion ? "opacity 400ms ease" : transition}`,
       };
     });
   }
@@ -695,9 +745,11 @@
     lastFocus?.focus?.();
   }
 
-  cartButton?.addEventListener("click", openCart);
-  cartBackdrop?.addEventListener("click", closeCart);
-  cartClose?.addEventListener("click", closeCart);
+  safe("cart-bind", () => {
+    if (cartButton) cartButton.addEventListener("click", openCart);
+    if (cartBackdrop) cartBackdrop.addEventListener("click", closeCart);
+    if (cartClose) cartClose.addEventListener("click", closeCart);
+  });
 
   function trapFocus(container, event) {
     const focusable = container.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
@@ -727,14 +779,16 @@
   let lightboxIndex = 0;
   let lightboxLastFocus = null;
 
-  galleryImages.forEach((img, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "gallery-cell" + (img.tall ? " tall" : "");
-    button.setAttribute("aria-label", `View ${img.alt}`);
-    button.innerHTML = `<img src="${img.src}" alt="${img.alt}" loading="lazy" decoding="async">`;
-    button.addEventListener("click", () => openLightbox(index));
-    galleryGrid?.appendChild(button);
+  safe("gallery", () => {
+    galleryImages.forEach((img, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "gallery-cell" + (img.tall ? " tall" : "");
+      button.setAttribute("aria-label", `View ${img.alt}`);
+      button.innerHTML = `<img src="${img.src}" alt="${img.alt}" loading="lazy" decoding="async">`;
+      button.addEventListener("click", () => openLightbox(index));
+      if (galleryGrid) galleryGrid.appendChild(button);
+    });
   });
 
   function openLightbox(index) {
@@ -764,14 +818,21 @@
     lightboxImage.alt = item.alt;
   }
 
-  lightbox?.addEventListener("click", closeLightbox);
-  lightboxImage?.addEventListener("click", (event) => event.stopPropagation());
-  lightbox?.querySelector(".lightbox-close")?.addEventListener("click", (event) => {
-    event.stopPropagation();
-    closeLightbox();
+  safe("lightbox-bind", () => {
+    if (lightbox) lightbox.addEventListener("click", closeLightbox);
+    if (lightboxImage) lightboxImage.addEventListener("click", (event) => event.stopPropagation());
+    const closeBtn = lightbox && lightbox.querySelector(".lightbox-close");
+    const prevBtn = lightbox && lightbox.querySelector(".lightbox-prev");
+    const nextBtn = lightbox && lightbox.querySelector(".lightbox-next");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        closeLightbox();
+      });
+    }
+    if (prevBtn) prevBtn.addEventListener("click", (event) => showLightbox(-1, event));
+    if (nextBtn) nextBtn.addEventListener("click", (event) => showLightbox(1, event));
   });
-  lightbox?.querySelector(".lightbox-prev")?.addEventListener("click", (event) => showLightbox(-1, event));
-  lightbox?.querySelector(".lightbox-next")?.addEventListener("click", (event) => showLightbox(1, event));
 
   /* ---------- request form ---------- */
   const form = document.getElementById("request-form");
@@ -790,7 +851,7 @@
     thanks?.removeAttribute("hidden");
   }
 
-  form?.addEventListener("submit", async (event) => {
+  if (form) form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(form);
     const name = String(data.get("name") || "").trim();
@@ -830,7 +891,7 @@
   });
 
   /* ---------- keyboard ---------- */
-  document.addEventListener("keydown", (event) => {
+  safe("keyboard", () => document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       if (lightbox?.classList.contains("is-open")) closeLightbox();
       else if (cartOverlay && !cartOverlay.hidden) closeCart();
@@ -846,10 +907,10 @@
       if (event.key === "ArrowLeft") showLightbox(-1, event);
       if (event.key === "ArrowRight") showLightbox(1, event);
     }
-  });
+  }));
 
-  renderMenuActions();
-  renderCart();
-  renderPopup();
-  window.setInterval(renderPopup, 1000);
+  safe("menu", renderMenuActions);
+  safe("cart", renderCart);
+  safe("popup", renderPopup);
+  window.setInterval(() => safe("popup", renderPopup), 1000);
 })();
