@@ -5,3 +5,5 @@ Animations/
 Pizza Photos/
 Babkas Pizza Co (Standalone).html
 *.zip
+.playwright-mcp/
+tmp-screenshots/
