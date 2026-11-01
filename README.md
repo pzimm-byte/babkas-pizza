@@ -21,6 +21,8 @@ Optional query flags for local review only:
 - `?noloader=1` skips the intro video
 - `?simulate=live` pretends the first scheduled stop is happening now, so you can check the live Place Order state
 
+The pop-up list includes an "I'm going" visit planner. Taps are stored on this device only until a backend is chosen (`PLANNER_BACKEND` in `js/config.js`). Shared public counts stay hidden in the meantime. Noah's headcount view is the unlinked `owner.html` file; it is not in the nav and has no password yet.
+
 ## How to edit the site
 
 All launch-sensitive values live in **`js/config.js`**. Change that file and refresh. You do not need a bundler.

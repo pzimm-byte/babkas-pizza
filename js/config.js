@@ -49,4 +49,96 @@ window.BABKAS_CONFIG = {
        "https://formsubmit.co/hello@babkaspizza.com"
      Leave empty to keep the on-page thank-you only. */
   REQUEST_FORM_ENDPOINT: "",
+
+  /* -------------------------------------------------------------------------
+     Visit planner (I'm going)
+     Open decisions live in the PR. Do not treat these placeholders as final.
+     ------------------------------------------------------------------------- */
+
+  /* Storage backend. null uses the local-only adapter below (this device).
+     To plug in a real backend later, set this to an object with:
+       getTaps(), getTap(id), saveTap(id, tap), deleteTap(id)
+     and set sharedCounts: true once counts are actually shared. */
+  PLANNER_BACKEND: null,
+
+  PLANNER_STORAGE_KEY: "babkas-planner-taps",
+
+  /* PLACEHOLDER — city/region appended to Maps and calendar locations.
+     Confirm real addresses per stop. A stop may also set its own `city`. */
+  PLANNER_CITY: "Chetek",
+  PLANNER_REGION: "WI",
+
+  /* PLACEHOLDER — lunch/dinner windows. Confirm with Noah.
+     A stop may set `windows: ["lunch", "dinner"]` to override auto-detect
+     (auto-detect uses whether the stop hours overlap these windows). */
+  PLANNER_WINDOWS: {
+    lunch: { id: "lunch", label: "Lunch 11 to 2", start: "11:00", end: "14:00" },
+    dinner: { id: "dinner", label: "Dinner 4 to 7", start: "16:00", end: "19:00" },
+  },
+
+  /* PLACEHOLDER — pies to prep = people / this number. Confirm with Noah. */
+  PLANNER_PIES_PER_PERSON: 1.1,
+
+  PLANNER_MAX_PARTY: 20,
+
+  /* Owner dashboard is owner.html (unlinked, noindex). Protection is pending.
+     Set false to show a not-available message on that file. */
+  PLANNER_OWNER_PAGE: true,
+};
+
+/* Local-only adapter: taps stay in localStorage on this device. No shared counts. */
+window.BABKAS_LOCAL_PLANNER_ADAPTER = function createLocalPlannerAdapter(cfg) {
+  const key = (cfg && cfg.PLANNER_STORAGE_KEY) || "babkas-planner-taps";
+  let memory = {};
+
+  function read() {
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (err) {
+      return memory;
+    }
+  }
+
+  function write(all) {
+    memory = all;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(all));
+    } catch (err) {
+      /* private mode or quota: keep memory only */
+    }
+  }
+
+  return {
+    kind: "local",
+    sharedCounts: false,
+    getTaps: function () {
+      return read();
+    },
+    getTap: function (id) {
+      const all = read();
+      return all[id] || null;
+    },
+    saveTap: function (id, tap) {
+      const all = read();
+      all[id] = tap;
+      write(all);
+    },
+    deleteTap: function (id) {
+      const all = read();
+      delete all[id];
+      write(all);
+    },
+  };
+};
+
+window.createBabkasPlannerAdapter = function (cfg) {
+  const config = cfg || window.BABKAS_CONFIG || {};
+  const backend = config.PLANNER_BACKEND;
+  if (backend && typeof backend === "object" && typeof backend.getTaps === "function") {
+    return backend;
+  }
+  return window.BABKAS_LOCAL_PLANNER_ADAPTER(config);
 };
