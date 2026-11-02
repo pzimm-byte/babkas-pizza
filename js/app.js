@@ -437,8 +437,13 @@
     return "I'm going";
   }
 
-  function pinSvg() {
-    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></svg>`;
+  function pinSvg(size) {
+    const s = size || 18;
+    return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></svg>`;
+  }
+
+  function directionsLink(ev) {
+    return `<a class="planner-dir" target="_blank" rel="noopener noreferrer" aria-label="Get directions to ${escapeAttr(ev.name)} in Google Maps" title="Directions" href="${directionsUrl(ev)}">${pinSvg(18)}<span>Directions</span></a>`;
   }
 
   function clockSvg() {
@@ -484,7 +489,7 @@
     const open = plannerUi.calId === ev.id;
     return `
       <div class="planner-cal${startAlign ? " is-start" : ""}${open ? " is-open" : ""}" data-cal-for="${ev.id}">
-        ${calLinkButton(ev, startAlign)}
+        ${calLinkButton(ev)}
         <div class="planner-cal-menu" role="menu" aria-label="Add to calendar">
           <div class="planner-cal-ttl">Add to calendar</div>
           <a href="${googleCalUrl(ev)}" target="_blank" rel="noopener noreferrer" data-cal="google">
@@ -747,9 +752,13 @@
       ? `<div class="planner-going">${count} planning to go</div>
          <div class="planner-bar" aria-hidden="true"><span style="width:${Math.min(100, (count / 20) * 100)}%"></span></div>`
       : "";
-    const goClass = open ? "planner-go is-close" : confirmed ? "planner-go is-done" : "planner-go";
-    const goText = open ? "Close" : confirmed ? goingLabel(tap.partySize, "done") : "I'm going";
-    const dir = `<a class="planner-dir" target="_blank" rel="noopener noreferrer" aria-label="Get directions to ${escapeAttr(ev.name)} in Google Maps" title="Directions" href="${directionsUrl(ev)}">${pinSvg()}</a>`;
+    const closeBtn = open
+      ? `<button class="planner-x" type="button" data-planner-go aria-label="Close">✕</button>`
+      : "";
+    const goBtn = confirmed
+      ? `<button class="planner-go is-done" type="button" data-planner-go>${goingLabel(tap.partySize, "done")}</button>`
+      : `<button class="planner-go" type="button" data-planner-go>I'm going</button>`;
+    const acts = open ? "" : `<div class="planner-acts">${goBtn}${directionsLink(ev)}</div>`;
 
     let extra = "";
     if (open) extra = plannerFormMarkup(ev, draft, tap);
@@ -757,32 +766,26 @@
 
     return `
       <div class="event-card${open ? " is-open" : ""}${confirmed ? " is-confirmed" : ""}" data-event-id="${ev.id}">
+        ${closeBtn}
         <div class="event-date">
           <span class="dow">${ev.weekday}</span>
           <span class="day">${ev.day}</span>
           <span class="month">${ev.month}</span>
         </div>
         <div class="event-copy">
-          <div class="event-head">
-            <div class="event-ttl">
-              ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
-              <span class="name">${ev.name}</span>
-              <span class="addr">${ev.address}</span>
-            </div>
-            ${dir}
-          </div>
+          ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
+          <span class="name">${ev.name}</span>
+          <span class="addr">${ev.address}</span>
           <span class="event-time">${clockSvg()} ${ev.time}</span>
           ${countLine}
         </div>
-        <div class="planner-acts">
-          <button class="${goClass}" type="button" data-planner-go>${goText}</button>
-        </div>
+        ${acts}
         ${extra}
       </div>`;
   }
 
-  function calLinkButton(ev, small) {
-    return `<button type="button" class="${small ? "planner-cal-link" : "planner-cal-big"}" data-cal-toggle="${ev.id}">📅 Add to calendar${small ? "" : " ▾"}</button>`;
+  function calLinkButton(ev) {
+    return `<button type="button" class="planner-cal-big" data-cal-toggle="${ev.id}">📅 Add to calendar ▾</button>`;
   }
 
   function plannerFormMarkup(ev, draft, tap) {
