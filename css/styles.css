@@ -947,10 +947,12 @@ textarea:focus {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 16px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 18px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  column-gap: 16px;
+  row-gap: 14px;
+  align-items: start;
+  position: relative;
   border: 2px solid transparent;
 }
 
@@ -993,25 +995,14 @@ textarea:focus {
 }
 
 .event-copy {
-  flex: 1 1 240px;
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.event-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.event-ttl {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.event-card.is-open .event-copy {
+  padding-right: 52px;
 }
 
 .event-copy .name {
@@ -1030,7 +1021,7 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 6px;
   font-weight: 700;
   color: var(--ink);
   font-size: 14px;
@@ -1052,7 +1043,7 @@ textarea:focus {
   border-radius: 9px;
   overflow: hidden;
   margin-top: 6px;
-  max-width: 260px;
+  max-width: none;
 }
 
 .planner-bar span {
@@ -1061,29 +1052,39 @@ textarea:focus {
   background: linear-gradient(90deg, var(--flame-300), var(--flame-600));
 }
 
-.planner-cal-link {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--flame-600);
-  text-decoration: underline;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-
-.planner-cal-link:hover {
-  color: var(--flame-700);
-}
-
 .planner-acts {
+  grid-column: 2;
   display: flex;
   gap: 10px;
   align-items: center;
+  width: auto;
+}
+
+.planner-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-300);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   flex: none;
+}
+
+.planner-x:hover {
+  border-color: var(--flame-500);
+  color: var(--flame-600);
 }
 
 .planner-go {
@@ -1096,25 +1097,21 @@ textarea:focus {
   font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 12px 20px;
+  height: 44px;
+  padding: 0 22px;
   cursor: pointer;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex: 0 1 240px;
 }
 
 .planner-go:hover {
   background: var(--flame-600);
   border-color: var(--flame-600);
   color: var(--white);
-}
-
-.planner-go.is-close {
-  background: var(--white);
-  color: var(--flame-600);
-  border-color: var(--flame-500);
-}
-
-.planner-go.is-close:hover {
-  background: var(--paper);
 }
 
 .planner-go.is-done {
@@ -1133,14 +1130,20 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  gap: 8px;
   height: 44px;
-  border-radius: 50%;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
   border: 2px solid var(--flame-500);
   background: var(--white);
-  color: var(--flame-500);
+  color: var(--flame-600);
   text-decoration: none;
-  padding: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 .planner-dir:hover,
@@ -1156,7 +1159,7 @@ textarea:focus {
 }
 
 .planner-panel {
-  flex-basis: 100%;
+  grid-column: 1 / -1;
   border-top: 1px dashed var(--gray-300);
   padding-top: 14px;
   display: grid;
@@ -1278,7 +1281,7 @@ textarea:focus {
 }
 
 .planner-conf {
-  flex-basis: 100%;
+  grid-column: 1 / -1;
   background: var(--paper);
   border-radius: 14px;
   padding: 16px;
@@ -1308,9 +1311,13 @@ textarea:focus {
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 13px 22px;
+  height: 44px;
+  padding: 0 22px;
   margin: 10px 0 6px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .planner-cal-big:hover {
@@ -1427,12 +1434,17 @@ textarea:focus {
   }
 
   .planner-acts {
+    grid-column: 1 / -1;
     width: 100%;
   }
 
   .planner-go {
     flex: 1;
-    width: 100%;
+    width: auto;
+  }
+
+  .planner-dir {
+    padding: 0 16px;
   }
 
   .planner-cal-big {
@@ -1472,27 +1484,6 @@ textarea:focus {
 
   .event-card {
     padding: 14px;
-  }
-}
-
-@media (min-width: 641px) {
-  .event-card {
-    position: relative;
-    align-items: flex-start;
-  }
-
-  .event-card .planner-dir {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-  }
-
-  .event-card > .planner-acts {
-    align-self: flex-end;
-    margin-left: auto;
-    min-height: 96px;
-    display: flex;
-    align-items: flex-end;
   }
 }
 
