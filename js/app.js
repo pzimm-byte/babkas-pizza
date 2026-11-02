@@ -300,8 +300,23 @@
   const nextCard = document.getElementById("next-card");
   const emptyCard = document.getElementById("empty-card");
   const scheduleList = document.getElementById("schedule-list");
+  const scheduleWrap = document.getElementById("schedule-wrap");
+  const scheduleSoon = document.getElementById("schedule-soon");
+  const ownerDash = document.getElementById("owner-dash");
   let isLive = false;
   let paintedKey = "";
+  let listKey = "";
+
+  const plannerAdapter = window.createBabkasPlannerAdapter
+    ? window.createBabkasPlannerAdapter(cfg)
+    : { kind: "local", sharedCounts: false, getTaps() { return {}; }, getTap() { return null; }, saveTap() {}, deleteTap() {} };
+  const plannerWindows = cfg.PLANNER_WINDOWS || {};
+  const plannerCity = cfg.PLANNER_CITY || "Chetek";
+  const plannerRegion = cfg.PLANNER_REGION || "WI";
+  const plannerMaxParty = Number(cfg.PLANNER_MAX_PARTY) || 20;
+  const piesPerPerson = Number(cfg.PLANNER_PIES_PER_PERSON) || 1.1;
+  const showPublicCounts = !!(plannerAdapter && plannerAdapter.sharedCounts);
+  const plannerUi = { openId: null, calId: null, calFrom: null, drafts: {} };
 
   function parsedSchedule() {
     return SCHEDULE.map((e) => {
@@ -310,6 +325,193 @@
       return { ...e, startMs, endMs };
     }).sort((a, b) => a.startMs - b.startMs);
   }
+
+  function timeToMin(hhmm) {
+    const parts = String(hhmm || "0:0").split(":");
+    return Number(parts[0]) * 60 + Number(parts[1] || 0);
+  }
+
+  function rangesOverlap(a0, a1, b0, b1) {
+    return a0 < b1 && b0 < a1;
+  }
+
+  function eventId(e) {
+    return `${e.date}|${e.start}|${e.name}`;
+  }
+
+  function eventCity(e) {
+    return e.city || plannerCity;
+  }
+
+  function destination(e) {
+    return [e.name, e.address, eventCity(e), plannerRegion].filter(Boolean).join(", ");
+  }
+
+  function eventWindows(e) {
+    if (Array.isArray(e.windows) && e.windows.length) {
+      return e.windows.filter((id) => plannerWindows[id]);
+    }
+    const start = timeToMin(e.start);
+    const end = timeToMin(e.end);
+    return Object.keys(plannerWindows).filter((id) => {
+      const w = plannerWindows[id];
+      return rangesOverlap(start, end, timeToMin(w.start), timeToMin(w.end));
+    });
+  }
+
+  function localStamp(dateStr, timeStr) {
+    return `${dateStr.replace(/-/g, "")}T${timeStr.replace(":", "")}00`;
+  }
+
+  function googleCalUrl(e) {
+    const start = localStamp(e.date, e.start);
+    const end = localStamp(e.date, e.end);
+    const text = `Babka's Pizza Pop-Up: ${e.name}`;
+    const details = `Fresh fired pizza from Babka's Pizza Co. ${cfg.SITE_URL || ""}`.trim();
+    return (
+      "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      `&text=${encodeURIComponent(text)}` +
+      `&dates=${start}/${end}` +
+      `&ctz=${encodeURIComponent(TZ)}` +
+      `&location=${encodeURIComponent(destination(e))}` +
+      `&details=${encodeURIComponent(details)}`
+    );
+  }
+
+  function icsEscape(value) {
+    return String(value || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+  }
+
+  function icsText(e) {
+    const start = localStamp(e.date, e.start);
+    const end = localStamp(e.date, e.end);
+    const uid = `babkas-${start}@babkaspizza`;
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+    return [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Babkas Pizza//Visit Planner//EN",
+      "CALSCALE:GREGORIAN",
+      "BEGIN:VTIMEZONE",
+      "TZID:America/Chicago",
+      "BEGIN:DAYLIGHT",
+      "TZOFFSETFROM:-0600",
+      "TZOFFSETTO:-0500",
+      "TZNAME:CDT",
+      "DTSTART:19700308T020000",
+      "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
+      "END:DAYLIGHT",
+      "BEGIN:STANDARD",
+      "TZOFFSETFROM:-0500",
+      "TZOFFSETTO:-0600",
+      "TZNAME:CST",
+      "DTSTART:19701101T020000",
+      "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
+      "END:STANDARD",
+      "END:VTIMEZONE",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART;TZID=America/Chicago:${start}`,
+      `DTEND;TZID=America/Chicago:${end}`,
+      `SUMMARY:${icsEscape(`Babka's Pizza Pop-Up: ${e.name}`)}`,
+      `LOCATION:${icsEscape(destination(e))}`,
+      `DESCRIPTION:${icsEscape(cfg.SITE_URL || "")}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+  }
+
+  function icsFilename(e) {
+    return `babkas-${e.date.replace(/-/g, "")}.ics`;
+  }
+
+  function directionsUrl(e) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination(e))}`;
+  }
+
+  function goingLabel(n, mode) {
+    const many = Number(n) > 1;
+    if (mode === "done") return many ? "✓ We're going" : "✓ I'm going";
+    if (mode === "submit") return many ? "We're going 🍕" : "I'm going 🍕";
+    return "I'm going";
+  }
+
+  function pinSvg() {
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></svg>`;
+  }
+
+  function clockSvg() {
+    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>`;
+  }
+
+  function draftFor(ev) {
+    const tap = plannerAdapter.getTap(ev.id);
+    const saved = plannerUi.drafts[ev.id] || {};
+    return {
+      window: saved.window != null ? saved.window : tap && tap.window != null ? tap.window : "",
+      party: Math.max(1, Math.min(plannerMaxParty, Number(saved.party || (tap && tap.partySize) || 1))),
+      name: saved.name != null ? saved.name : (tap && tap.name) || "",
+    };
+  }
+
+  function setDraft(id, patch) {
+    plannerUi.drafts[id] = Object.assign({}, draftFor({ id }), plannerUi.drafts[id], patch);
+  }
+
+  function closeCalMenu() {
+    plannerUi.calId = null;
+    plannerUi.calFrom = null;
+    document.body.classList.remove("cal-sheet-open");
+    if (scheduleList) {
+      scheduleList.querySelectorAll(".planner-cal.is-open").forEach((el) => el.classList.remove("is-open"));
+    }
+  }
+
+  function downloadIcsFor(ev) {
+    const blob = new Blob([icsText(ev)], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = icsFilename(ev);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function calBlock(ev, startAlign) {
+    const open = plannerUi.calId === ev.id;
+    return `
+      <div class="planner-cal${startAlign ? " is-start" : ""}${open ? " is-open" : ""}" data-cal-for="${ev.id}">
+        ${calLinkButton(ev, startAlign)}
+        <div class="planner-cal-menu" role="menu" aria-label="Add to calendar">
+          <div class="planner-cal-ttl">Add to calendar</div>
+          <a href="${googleCalUrl(ev)}" target="_blank" rel="noopener noreferrer" data-cal="google">
+            <span class="planner-cal-ic is-flame">G</span>Google Calendar
+          </a>
+          <button type="button" class="planner-cal-opt" data-cal="apple">
+            <span class="planner-cal-ic is-black">A</span>Apple / iCloud
+          </button>
+          <button type="button" class="planner-cal-opt" data-cal="ics">
+            <span class="planner-cal-ic is-brick">O</span>Outlook / Other (.ics)
+          </button>
+        </div>
+      </div>`;
+  }
+
+  window.__babkasPlanner = {
+    adapter: plannerAdapter,
+    eventId,
+    destination,
+    eventWindows,
+    googleCalUrl,
+    icsText,
+    icsFilename,
+    directionsUrl,
+    localStamp,
+    goingLabel,
+  };
 
   function pizzaSlices(now) {
     const phase = Math.floor(now / 1000) % 11;
@@ -477,7 +679,6 @@
   function popupState(now) {
     const all = parsedSchedule();
     const future = all.filter((e) => e.endMs > now);
-    const windowEnd = now + 30 * 86400000;
     const nextRaw = future[0] || null;
     isLive = !!(nextRaw && now >= nextRaw.startMs);
     const target = nextRaw ? (isLive ? nextRaw.endMs : nextRaw.startMs) : now;
@@ -488,18 +689,24 @@
     diff -= h * 3600;
     const m = Math.floor(diff / 60);
     const sec = diff - m * 60;
-    const events = future
-      .filter((e) => e.startMs < windowEnd)
-      .map((e, i) => {
+    const events = future.slice(0, 3).map((e, i) => {
         const live = i === 0 && isLive;
         const upNext = i === 0 && !isLive;
         return {
+          id: eventId(e),
+          date: e.date,
+          start: e.start,
+          end: e.end,
+          startMs: e.startMs,
+          endMs: e.endMs,
           weekday: formatInZone(e.startMs, { weekday: "short" }),
           day: formatInZone(e.startMs, { day: "numeric" }),
           month: formatInZone(e.startMs, { month: "short" }),
           name: e.name,
           address: e.address,
+          city: eventCity(e),
           time: `${fmtTime(e.startMs)} to ${fmtTime(e.endMs)}`,
+          windows: eventWindows(e),
           showChip: live || upNext,
           chip: live ? "Live now" : "Next up",
           live,
@@ -518,25 +725,218 @@
     };
   }
 
+  let lastPlannerEvents = [];
+
   function renderScheduleList(events) {
-    scheduleList.innerHTML = events
-      .map(
-        (ev) => `
-      <div class="event-card">
+    if (!scheduleList) return;
+    lastPlannerEvents = events;
+    const phone = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+    scheduleList.innerHTML = events.map((ev) => plannerCardMarkup(ev)).join("");
+    bindPlannerCards(events);
+    if (plannerUi.calId && phone) document.body.classList.add("cal-sheet-open");
+    else if (!plannerUi.calId) document.body.classList.remove("cal-sheet-open");
+  }
+
+  function plannerCardMarkup(ev) {
+    const tap = plannerAdapter.getTap(ev.id);
+    const draft = draftFor(ev);
+    const open = plannerUi.openId === ev.id;
+    const confirmed = !!tap && !open;
+    const count = tap ? Number(tap.partySize) || 0 : 0;
+    const countLine = showPublicCounts && count > 0
+      ? `<div class="planner-going">${count} planning to go</div>
+         <div class="planner-bar" aria-hidden="true"><span style="width:${Math.min(100, (count / 20) * 100)}%"></span></div>`
+      : "";
+    const goClass = open ? "planner-go is-close" : confirmed ? "planner-go is-done" : "planner-go";
+    const goText = open ? "Close" : confirmed ? goingLabel(tap.partySize, "done") : "I'm going";
+    const dir = `<a class="planner-dir" target="_blank" rel="noopener noreferrer" aria-label="Get directions to ${escapeAttr(ev.name)} in Google Maps" title="Directions" href="${directionsUrl(ev)}">${pinSvg()}</a>`;
+
+    let extra = "";
+    if (open) extra = plannerFormMarkup(ev, draft, tap);
+    else if (confirmed) extra = plannerConfirmMarkup(ev);
+
+    return `
+      <div class="event-card${open ? " is-open" : ""}${confirmed ? " is-confirmed" : ""}" data-event-id="${ev.id}">
         <div class="event-date">
           <span class="dow">${ev.weekday}</span>
           <span class="day">${ev.day}</span>
           <span class="month">${ev.month}</span>
         </div>
         <div class="event-copy">
-          ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
-          <span class="name">${ev.name}</span>
-          <span class="addr">${ev.address}</span>
+          <div class="event-head">
+            <div class="event-ttl">
+              ${ev.showChip ? `<span class="chip${ev.live ? " chip-live" : ""}">${ev.chip}</span>` : ""}
+              <span class="name">${ev.name}</span>
+              <span class="addr">${ev.address}</span>
+            </div>
+            ${dir}
+          </div>
+          <span class="event-time">${clockSvg()} ${ev.time}</span>
+          ${countLine}
         </div>
-        <span class="event-time">${ev.time}</span>
-      </div>`
-      )
-      .join("");
+        <div class="planner-acts">
+          <button class="${goClass}" type="button" data-planner-go>${goText}</button>
+        </div>
+        ${extra}
+      </div>`;
+  }
+
+  function calLinkButton(ev, small) {
+    return `<button type="button" class="${small ? "planner-cal-link" : "planner-cal-big"}" data-cal-toggle="${ev.id}">📅 Add to calendar${small ? "" : " ▾"}</button>`;
+  }
+
+  function plannerFormMarkup(ev, draft, tap) {
+    const pills = ev.windows.map((id) => {
+      const w = plannerWindows[id];
+      const on = draft.window === id ? " is-on" : "";
+      return `<button type="button" data-window="${id}" class="${on.trim()}">${w.label}</button>`;
+    }).join("");
+    const unsureOn = draft.window === "unsure" ? " is-on" : "";
+    return `
+      <div class="planner-panel">
+        <div class="planner-row">
+          <div>
+            <label class="planner-field-label">When are you coming? (optional)</label>
+            <div class="planner-seg">
+              ${pills}
+              <button type="button" data-window="unsure" class="${unsureOn.trim()}">Not sure</button>
+            </div>
+          </div>
+          <div>
+            <label class="planner-field-label">How many in your group?</label>
+            <div class="planner-step">
+              <button type="button" data-step="-1" aria-label="Fewer people">−</button>
+              <em data-party>${draft.party}</em>
+              <button type="button" data-step="1" aria-label="More people">+</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="planner-field-label" for="planner-name-${cssId(ev.id)}">First name (optional)</label>
+          <input class="planner-name" id="planner-name-${cssId(ev.id)}" type="text" autocomplete="given-name" maxlength="40" value="${escapeAttr(draft.name)}">
+        </div>
+        <button class="planner-submit" type="button" data-planner-submit>${goingLabel(draft.party, "submit")}</button>
+        ${tap ? `<button class="planner-cancel" type="button" data-planner-cancel>Cancel my tap</button>` : ""}
+        <div class="planner-fine">No sign-in needed. This is just a heads-up, not an order or reservation.</div>
+      </div>`;
+  }
+
+  function plannerConfirmMarkup(ev) {
+    return `
+      <div class="planner-conf">
+        <div class="planner-conf-thanks">Thanks for letting us know.</div>
+        <p><b>We look forward to seeing you!</b></p>
+        ${calBlock(ev, false)}
+      </div>`;
+  }
+
+  function cssId(id) {
+    return String(id).replace(/[^a-zA-Z0-9_-]/g, "-");
+  }
+
+  function escapeAttr(value) {
+    return String(value || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  }
+
+  function bindPlannerCards(events) {
+    const byId = {};
+    events.forEach((ev) => { byId[ev.id] = ev; });
+
+    scheduleList.querySelectorAll(".event-card").forEach((card) => {
+      const ev = byId[card.dataset.eventId];
+      if (!ev) return;
+
+      const go = card.querySelector("[data-planner-go]");
+      if (go) {
+        go.addEventListener("click", () => {
+          if (plannerUi.openId === ev.id) plannerUi.openId = null;
+          else plannerUi.openId = ev.id;
+          closeCalMenu();
+          renderScheduleList(events);
+        });
+      }
+
+      card.querySelectorAll("[data-window]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const next = btn.getAttribute("data-window");
+          const cur = draftFor(ev).window;
+          setDraft(ev.id, { window: cur === next ? "" : next });
+          renderScheduleList(events);
+        });
+      });
+
+      card.querySelectorAll("[data-step]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const delta = Number(btn.getAttribute("data-step"));
+          const party = Math.max(1, Math.min(plannerMaxParty, draftFor(ev).party + delta));
+          setDraft(ev.id, { party });
+          const em = card.querySelector("[data-party]");
+          const submit = card.querySelector("[data-planner-submit]");
+          if (em) em.textContent = String(party);
+          if (submit) submit.textContent = goingLabel(party, "submit");
+        });
+      });
+
+      const nameInput = card.querySelector(".planner-name");
+      if (nameInput) {
+        nameInput.addEventListener("input", () => setDraft(ev.id, { name: nameInput.value }));
+      }
+
+      const submit = card.querySelector("[data-planner-submit]");
+      if (submit) {
+        submit.addEventListener("click", () => {
+          const draft = draftFor(ev);
+          plannerAdapter.saveTap(ev.id, {
+            partySize: draft.party,
+            window: draft.window || "unsure",
+            name: String(draft.name || "").trim(),
+            updatedAt: new Date().toISOString(),
+          });
+          plannerUi.openId = null;
+          closeCalMenu();
+          renderScheduleList(events);
+          if (ownerDash) renderOwnerDashboard();
+        });
+      }
+
+      const cancel = card.querySelector("[data-planner-cancel]");
+      if (cancel) {
+        cancel.addEventListener("click", () => {
+          plannerAdapter.deleteTap(ev.id);
+          setDraft(ev.id, { window: "", party: 1, name: "" });
+          plannerUi.openId = null;
+          closeCalMenu();
+          renderScheduleList(events);
+          if (ownerDash) renderOwnerDashboard();
+        });
+      }
+
+      card.querySelectorAll("[data-cal-toggle]").forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const id = btn.getAttribute("data-cal-toggle");
+          if (plannerUi.calId === id) closeCalMenu();
+          else {
+            plannerUi.calId = id;
+            if (window.matchMedia && window.matchMedia("(max-width: 640px)").matches) {
+              document.body.classList.add("cal-sheet-open");
+            }
+          }
+          renderScheduleList(events);
+        });
+      });
+
+      card.querySelectorAll("[data-cal]").forEach((el) => {
+        el.addEventListener("click", (event) => {
+          const kind = el.getAttribute("data-cal");
+          if (kind === "google") return;
+          event.preventDefault();
+          downloadIcsFor(ev);
+          closeCalMenu();
+          renderScheduleList(events);
+        });
+      });
+    });
   }
 
   function paintNextCard(state, now) {
@@ -580,21 +980,21 @@
       nextCard.hidden = true;
       nextCard.innerHTML = "";
       emptyCard.hidden = false;
+      if (scheduleWrap) scheduleWrap.hidden = true;
       paintedKey = "empty";
-      if (!scheduleList.dataset.ready) {
-        renderScheduleList(state.events);
-        scheduleList.dataset.ready = "1";
-      }
+      listKey = "";
       renderCartFoot();
       return;
     }
 
     emptyCard.hidden = true;
     nextCard.hidden = false;
+    if (scheduleWrap) scheduleWrap.hidden = false;
+    if (scheduleSoon) scheduleSoon.hidden = false;
     const key = `${state.nextRaw.date}|${state.nextRaw.start}|${state.isLive ? "live" : "soon"}`;
+    const nextListKey = state.events.map((e) => e.id).join("||");
     if (paintedKey !== key) {
       paintNextCard(state, now);
-      renderScheduleList(state.events);
       paintedKey = key;
       lastPizzaCycle = Math.floor(now / 11000);
     } else {
@@ -604,8 +1004,123 @@
       });
       updatePizza(now);
     }
+    if (listKey !== nextListKey) {
+      renderScheduleList(state.events);
+      listKey = nextListKey;
+    }
 
     renderCartFoot();
+  }
+
+  function upcomingForOwner() {
+    const now = nowMs();
+    return parsedSchedule().filter((e) => e.endMs > now).slice(0, 3).map((e) => ({
+      ...e,
+      id: eventId(e),
+      weekday: formatInZone(e.startMs, { weekday: "short" }),
+      weekdayLong: formatInZone(e.startMs, { weekday: "long" }),
+      day: formatInZone(e.startMs, { day: "numeric" }),
+      month: formatInZone(e.startMs, { month: "short" }),
+    }));
+  }
+
+  function ownerCounts(events) {
+    const taps = plannerAdapter.getTaps() || {};
+    return events.map((e) => {
+      const tap = taps[e.id];
+      const n = tap ? Number(tap.partySize) || 0 : 0;
+      const win = tap ? tap.window : "";
+      return {
+        event: e,
+        lunch: win === "lunch" ? n : 0,
+        dinner: win === "dinner" ? n : 0,
+        unsure: win && win !== "lunch" && win !== "dinner" ? n : 0,
+        total: n,
+      };
+    });
+  }
+
+  function renderOwnerDashboard() {
+    if (!ownerDash) return;
+    if (cfg.PLANNER_OWNER_PAGE === false) {
+      ownerDash.innerHTML = `<div class="section-intro"><h2 class="section-heading">Who's coming</h2><p>This page is not available.</p></div>`;
+      return;
+    }
+    const events = upcomingForOwner();
+    const rows = ownerCounts(events);
+    const people = rows.reduce((n, r) => n + r.total, 0);
+    const lunch = rows.reduce((n, r) => n + r.lunch, 0);
+    const dinner = rows.reduce((n, r) => n + r.dinner, 0);
+    const busiest = rows.reduce((best, r) => (!best || r.total > best.total ? r : best), null);
+    const dinnerShare = people ? Math.round((dinner / people) * 100) : 0;
+    const pies = busiest && busiest.total ? Math.round(busiest.total / piesPerPerson) : 0;
+    const busiestLabel = busiest && busiest.total
+      ? `${busiest.event.weekday} ${busiest.event.day}`
+      : "None";
+    const max = Math.max.apply(null, rows.map((r) => r.total).concat([1]));
+
+    const bars = rows.map((r) => {
+      const top = busiest && r.event.id === busiest.event.id && r.total > 0;
+      const dH = Math.round((r.dinner / max) * 190);
+      const lH = Math.round((r.lunch / max) * 190);
+      return `<div class="owner-col${top ? " is-top" : ""}">
+        ${top ? `<span class="owner-crown">Busiest</span>` : ""}
+        <span class="owner-total">${r.total}</span>
+        <div class="owner-stk">
+          <div class="owner-din" style="height:${dH}px"></div>
+          <div class="owner-lun" style="height:${lH}px"></div>
+        </div>
+      </div>`;
+    }).join("");
+
+    const xl = rows.map((r) => `<div>${r.event.weekday} ${r.event.day}</div>`).join("");
+    const table = rows.map((r) => {
+      const e = r.event;
+      return `<tr>
+        <td>${e.weekday} ${e.month} ${e.day}</td>
+        <td class="owner-hide-m">${e.name}</td>
+        <td>${r.lunch}</td>
+        <td>${r.dinner}</td>
+        <td><b>${r.total}</b></td>
+      </tr>`;
+    }).join("");
+
+    let tip;
+    if (!people) {
+      tip = `No taps on this device yet. These numbers are local only until a shared backend is chosen.`;
+    } else if (busiest && busiest.total) {
+      const e = busiest.event;
+      tip = `${e.weekdayLong} at ${e.name} is your <b>busiest day</b>: ${busiest.total} people (${busiest.lunch} lunch, ${busiest.dinner} dinner). At about 1 pie per ${piesPerPerson} people, plan for <b>~${pies} pies</b>.`;
+    } else {
+      tip = `Headcount from this device only.`;
+    }
+
+    ownerDash.innerHTML = `
+      <div class="section-intro">
+        <span class="eyebrow">For Noah · Owner view</span>
+        <h2 class="section-heading">Who's coming</h2>
+        <p>Expected headcount from "I'm going" taps on the schedule.</p>
+      </div>
+      <div class="owner-kpis">
+        <div class="owner-kpi"><b>${people}</b><span>People, next 3 pop-ups</span></div>
+        <div class="owner-kpi"><b>${busiestLabel}</b><span>Busiest day</span></div>
+        <div class="owner-kpi"><b>${dinnerShare}%</b><span>Dinner share</span></div>
+        <div class="owner-kpi"><b>~${pies}</b><span>Pies to prep${busiest && busiest.total ? ` ${busiest.event.weekday}` : ""}</span></div>
+      </div>
+      <div class="owner-chart">
+        <h3>Expected people by pop-up</h3>
+        <div class="owner-bars">${bars || `<p class="owner-note">No upcoming pop-ups.</p>`}</div>
+        <div class="owner-xl">${xl}</div>
+        <div class="owner-leg">
+          <span><i style="background:#e3ab6f"></i>Lunch</span>
+          <span><i style="background:#d8431a"></i>Dinner</span>
+        </div>
+      </div>
+      <div class="owner-tip">${tip}</div>
+      <table class="owner-table">
+        <tr><th>Date</th><th class="owner-hide-m">Stop</th><th>Lunch</th><th>Dinner</th><th>Total</th></tr>
+        ${table || `<tr><td colspan="5">No upcoming pop-ups.</td></tr>`}
+      </table>`;
   }
 
   /* ---------- cart ---------- */
@@ -893,7 +1408,10 @@
   /* ---------- keyboard ---------- */
   safe("keyboard", () => document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      if (lightbox?.classList.contains("is-open")) closeLightbox();
+      if (plannerUi.calId) {
+        closeCalMenu();
+        if (lastPlannerEvents.length) renderScheduleList(lastPlannerEvents);
+      } else if (lightbox?.classList.contains("is-open")) closeLightbox();
       else if (cartOverlay && !cartOverlay.hidden) closeCart();
       else closeNav();
     }
@@ -912,5 +1430,23 @@
   safe("menu", renderMenuActions);
   safe("cart", renderCart);
   safe("popup", renderPopup);
+  safe("owner", renderOwnerDashboard);
   window.setInterval(() => safe("popup", renderPopup), 1000);
+
+  safe("planner-dismiss", () => {
+    document.addEventListener("click", (event) => {
+      if (!plannerUi.calId) return;
+      if (event.target.closest(".planner-cal-menu") || event.target.closest("[data-cal-toggle]")) return;
+      closeCalMenu();
+      if (lastPlannerEvents.length) renderScheduleList(lastPlannerEvents);
+    });
+    window.addEventListener("resize", () => {
+      if (!plannerUi.calId) return;
+      if (window.matchMedia && window.matchMedia("(max-width: 640px)").matches) {
+        document.body.classList.add("cal-sheet-open");
+      } else {
+        document.body.classList.remove("cal-sheet-open");
+      }
+    });
+  });
 })();
